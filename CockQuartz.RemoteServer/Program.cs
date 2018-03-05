@@ -35,13 +35,13 @@ namespace CockQuartz.RemoteServer
             //表名前缀
             properties["quartz.jobStore.tablePrefix"] = "qrtz_";
             //驱动类型
-            properties["quartz.jobStore.driverDelegateType"] = "Quartz.Impl.AdoJobStore.MySQLDelegate, Quartz";
+            properties["quartz.jobStore.driverDelegateType"] = "Quartz.Impl.AdoJobStore.SqlServerDelegate, Quartz";
             //数据源名称
             properties["quartz.jobStore.dataSource"] = "myDS";
             //连接字符串
             properties["quartz.dataSource.myDS.connectionString"] = ConfigurationManager.ConnectionStrings["quartz_analyticsEntities"].ToString();
             //版本
-            properties["quartz.dataSource.myDS.provider"] = "MySql-65";
+            properties["quartz.dataSource.myDS.provider"] = "SqlServer-20";
             properties["quartz.scheduler.instanceId"] = "AUTO";
             var schedulerFactory = new StdSchedulerFactory(properties);
             var scheduler = schedulerFactory.GetScheduler();
