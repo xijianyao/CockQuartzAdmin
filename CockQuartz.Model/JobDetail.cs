@@ -27,5 +27,8 @@ namespace CockQuartz.Model
         public string Description { get; set; }
 
         public DateTime? CreateTime { get; set; }
+
+        [StringLength(200)]
+        public string RequestUrl { get; set; }
     }
 }

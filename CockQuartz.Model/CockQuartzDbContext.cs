@@ -1,13 +1,13 @@
+using System;
+using System.Data.Entity;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
+
 namespace CockQuartz.Model
 {
-    using System;
-    using System.Data.Entity;
-    using System.ComponentModel.DataAnnotations.Schema;
-    using System.Linq;
-
-    public partial class CockQuartz : DbContext
+    public partial class CockQuartzDbContext : DbContext
     {
-        public CockQuartz()
+        public CockQuartzDbContext()
             : base("name=CockQuartz")
         {
         }
