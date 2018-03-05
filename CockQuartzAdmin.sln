@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CockQuartz.Admin", "CockQua
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CockQuartz.Model", "CockQuartz.Model\CockQuartz.Model.csproj", "{1DC679BF-7DF2-4757-A6F5-0D0925A02EDE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CockQuartz.RemoteServer", "CockQuartz.RemoteServer\CockQuartz.RemoteServer.csproj", "{7FD68B0F-67F0-475C-B413-AD2C2556B1E8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{1DC679BF-7DF2-4757-A6F5-0D0925A02EDE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1DC679BF-7DF2-4757-A6F5-0D0925A02EDE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1DC679BF-7DF2-4757-A6F5-0D0925A02EDE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7FD68B0F-67F0-475C-B413-AD2C2556B1E8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7FD68B0F-67F0-475C-B413-AD2C2556B1E8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7FD68B0F-67F0-475C-B413-AD2C2556B1E8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7FD68B0F-67F0-475C-B413-AD2C2556B1E8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
