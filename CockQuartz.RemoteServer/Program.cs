@@ -1,13 +1,15 @@
-﻿using Quartz.Impl;
+﻿using System;
+using Quartz.Impl;
 using System.Collections.Specialized;
 using System.Configuration;
+using Microsoft.Owin.Hosting;
+using Quartz;
 
 namespace CockQuartz.RemoteServer
 {
     class Program
     {
         static void Main(string[] args)
-
         {
             var properties = new NameValueCollection();
             properties["quartz.scheduler.instanceName"] = "RemoteServer";
@@ -25,6 +27,7 @@ namespace CockQuartz.RemoteServer
             properties["quartz.jobStore.clustered"] = "true";
             //存储类型
             properties["quartz.jobStore.type"] = "Quartz.Impl.AdoJobStore.JobStoreTX, Quartz";
+            properties["quartz.serializer.type"] = "json";
             //表名前缀
             properties["quartz.jobStore.tablePrefix"] = "qrtz_";
             //驱动类型
@@ -34,13 +37,20 @@ namespace CockQuartz.RemoteServer
             //连接字符串
             properties["quartz.dataSource.myDS.connectionString"] = ConfigurationManager.ConnectionStrings["quartz_analyticsEntities"].ToString();
             //版本
-            properties["quartz.dataSource.myDS.provider"] = "SqlServer-20";
+            properties["quartz.dataSource.myDS.provider"] = "SqlServer";
             properties["quartz.scheduler.instanceId"] = "AUTO";
-            var schedulerFactory = new StdSchedulerFactory(properties);
-            var scheduler = schedulerFactory.GetScheduler();
+            ISchedulerFactory schedulerFactory = new StdSchedulerFactory(properties);
+            var scheduler = schedulerFactory.GetScheduler().Result;
             //scheduler.ListenerManager.AddJobListener(new MyJobListener(), GroupMatcher<JobKey>.AnyGroup());
             scheduler.Start();
 
+            var url = "http://+:8080";
+            using (WebApp.Start<Startup>(url))
+            {
+                Console.WriteLine("Running on {0}", url);
+                Console.WriteLine("Press enter to exit");
+                Console.ReadLine();
+            }
         }
     }
 }
