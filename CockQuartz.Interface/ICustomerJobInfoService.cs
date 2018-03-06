@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
-using CockQuartz.Model;
+﻿using CockQuartz.Model;
 
 namespace CockQuartz.Interface
 {
@@ -30,22 +24,5 @@ namespace CockQuartz.Interface
         /// <param name="customerJobInfoModel"></param>
         /// <returns>更新的任务编号</returns>
         int UpdateCustomerJobInfo(JobDetail customerJobInfoModel);
-        /// <summary>
-        /// 加载任务列表
-        /// </summary>
-        /// <typeparam name="K">排序表达式返回值类型</typeparam>
-        /// <param name="whereLambda">条件表达式</param>
-        /// <param name="orderByLambda">排序表达式</param>
-        /// <param name="isAsc">是否升序</param>
-        /// <param name="pageIndex">索引页</param>
-        /// <param name="pageSize">页数量</param>
-        /// <returns>查询数据集和总条数</returns>
-        Tuple<IQueryable<JobDetail>, int> LoadCustomerInfoes<K>(Expression<Func<JobDetail, bool>> whereLambda, Expression<Func<JobDetail, K>> orderByLambda, bool isAsc, int pageIndex, int pageSize);
-        /// <summary>
-        /// 加载单个任务
-        /// </summary>
-        /// <param name="whereLambda">条件表达式</param>
-        /// <returns>单个任务</returns>
-        JobDetail LoadCustomerInfo(Expression<Func<JobDetail, bool>> whereLambda);
     }
 }

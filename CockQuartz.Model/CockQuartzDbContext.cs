@@ -63,7 +63,7 @@ namespace CockQuartz.Model
                 .WithRequired(e => e.QRTZ_TRIGGERS)
                 .WillCascadeOnDelete();
 
-            modelBuilder.DisableFilterGlobally("SoftDelete");
+            //modelBuilder.DisableFilterGlobally("SoftDelete");
         }
     }
 }

@@ -9,17 +9,20 @@ namespace CockQuartz.Model
     using System.Data.Entity.Spatial;
 
     [Table("JobDetail")]
-    public partial class JobDetail : Entity
+    public partial class JobDetail : Entity, ISoftDelete
     {
 
         [StringLength(50)]
-        public string GroupName { get; set; }
+        public string JobGroupName { get; set; }
 
         [StringLength(50)]
         public string JobName { get; set; }
 
         [StringLength(50)]
         public string TriggerName { get; set; }
+
+        [StringLength(50)]
+        public string TriggerGroupName { get; set; }        
 
         [StringLength(50)]
         public string Cron { get; set; }
@@ -42,5 +45,7 @@ namespace CockQuartz.Model
 
         [StringLength(200)]
         public string ExceptionEmail { get; set; }
+
+        public bool IsDeleted { get; set; }
     }
 }

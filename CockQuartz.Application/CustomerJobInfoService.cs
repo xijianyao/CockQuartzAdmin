@@ -28,7 +28,7 @@ namespace CockQuartz.Application
                 TriggerName = "TriggerName",
                 UpdateTime = DateTime.Now,
                 UpdateUser = "UpdateUser",
-                GroupName = "GroupName",
+                JobGroupName = "GroupName",
                 ExceptionEmail = "ExceptionEmail",
                 CreateUser = "CreateUser",
                 Cron = "Cron",
@@ -42,14 +42,5 @@ namespace CockQuartz.Application
             throw new NotImplementedException();
         }
 
-        public Tuple<IQueryable<JobDetail>, int> LoadCustomerInfoes<K>(Expression<Func<JobDetail, bool>> whereLambda, Expression<Func<JobDetail, K>> orderByLambda, bool isAsc, int pageIndex, int pageSize)
-        {
-            throw new NotImplementedException();
-        }
-
-        public JobDetail LoadCustomerInfo(Expression<Func<JobDetail, bool>> whereLambda)
-        {
-            throw new NotImplementedException();
-        }
     }
 }
