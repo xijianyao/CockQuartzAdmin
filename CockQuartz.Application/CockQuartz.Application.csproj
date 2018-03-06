@@ -9,8 +9,9 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>CockQuartz.Application</RootNamespace>
     <AssemblyName>CockQuartz.Application</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -40,7 +41,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DbContextFactory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\CockQuartz.Interface\CockQuartz.Interface.csproj">
+      <Project>{864ca1d7-65c6-42cf-95b9-aea344222b8b}</Project>
+      <Name>CockQuartz.Interface</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CockQuartz.Model\CockQuartz.Model.csproj">
+      <Project>{1dc679bf-7df2-4757-a6f5-0d0925a02ede}</Project>
+      <Name>CockQuartz.Model</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
