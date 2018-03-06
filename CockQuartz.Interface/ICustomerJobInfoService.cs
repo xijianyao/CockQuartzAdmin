@@ -8,7 +8,7 @@ using CockQuartz.Model;
 
 namespace CockQuartz.Interface
 {
-    public interface ICustomerJobInfoRepository
+    public interface ICustomerJobInfoService
     {
         /// <summary>
         /// 添加任务

@@ -32,7 +32,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Castle.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
-      <HintPath>..\packages\Castle.Core.4.2.0\lib\net45\Castle.Core.dll</HintPath>
+      <HintPath>..\packages\Castle.Core.4.2.1\lib\net45\Castle.Core.dll</HintPath>
     </Reference>
     <Reference Include="Castle.Windsor, Version=4.0.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
       <HintPath>..\packages\Castle.Windsor.4.1.0\lib\net45\Castle.Windsor.dll</HintPath>
@@ -104,6 +104,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CockQuartzDbContext.cs" />
+    <Compile Include="CockQuartzModelModule.cs" />
     <Compile Include="JobDetail.cs" />
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -118,6 +119,7 @@
     <Compile Include="QRTZ_SIMPLE_TRIGGERS.cs" />
     <Compile Include="QRTZ_SIMPROP_TRIGGERS.cs" />
     <Compile Include="QRTZ_TRIGGERS.cs" />
+    <Compile Include="Repository\MainRepository.cs" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />

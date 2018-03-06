@@ -6,7 +6,7 @@ using CockQuartz.Model;
 
 namespace CockQuartz.Application
 {
-    public class CustomerJobInfoRepository : ICustomerJobInfoRepository
+    public class CustomerJobInfoService : ICustomerJobInfoService
     {
         public int AddCustomerJobInfo(string jobName, string jobGroupName, string triggerName, string triggerGroupName, string cron,
             string jobDescription, string requestUrl)

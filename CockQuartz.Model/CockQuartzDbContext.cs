@@ -1,10 +1,10 @@
-using System;
 using System.Data.Entity;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
+using CockQuartz.Model.Repository;
+using FeI.EntityFramework.Reporitory;
 
 namespace CockQuartz.Model
 {
+    [RepositoryTypes(typeof(MainRepository<>), typeof(MainRepository<,>))]
     public partial class CockQuartzDbContext : DbContext
     {
         public CockQuartzDbContext()
