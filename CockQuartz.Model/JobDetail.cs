@@ -26,9 +26,20 @@ namespace CockQuartz.Model
         [StringLength(200)]
         public string Description { get; set; }
 
-        public DateTime? CreateTime { get; set; }
+        public DateTime CreateTime { get; set; }
+
+        public DateTime? UpdateTime { get; set; }
+
+        [StringLength(50)]
+        public string CreateUser { get; set; }
+
+        [StringLength(50)]
+        public string UpdateUser { get; set; }
 
         [StringLength(200)]
         public string RequestUrl { get; set; }
+
+        [StringLength(200)]
+        public string ExceptionEmail { get; set; }
     }
 }
