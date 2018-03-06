@@ -1,13 +1,6 @@
-﻿using Quartz;
-using Quartz.Impl;
-using Quartz.Impl.Matchers;
-using System;
-using System.Collections.Generic;
+﻿using Quartz.Impl;
 using System.Collections.Specialized;
 using System.Configuration;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CockQuartz.RemoteServer
 {
@@ -45,7 +38,7 @@ namespace CockQuartz.RemoteServer
             properties["quartz.scheduler.instanceId"] = "AUTO";
             var schedulerFactory = new StdSchedulerFactory(properties);
             var scheduler = schedulerFactory.GetScheduler();
-            scheduler.ListenerManager.AddJobListener(new MyJobListener(), GroupMatcher<JobKey>.AnyGroup());
+            //scheduler.ListenerManager.AddJobListener(new MyJobListener(), GroupMatcher<JobKey>.AnyGroup());
             scheduler.Start();
 
         }
