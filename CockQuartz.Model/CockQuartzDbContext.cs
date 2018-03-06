@@ -1,11 +1,14 @@
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity;
 using CockQuartz.Model.Repository;
+using EntityFramework.DynamicFilters;
+using FeI.EntityFramework;
 using FeI.EntityFramework.Reporitory;
 
 namespace CockQuartz.Model
 {
     [RepositoryTypes(typeof(MainRepository<>), typeof(MainRepository<,>))]
-    public partial class CockQuartzDbContext : DbContext
+    public partial class CockQuartzDbContext : FeIDbContext
     {
         public CockQuartzDbContext()
             : base("name=CockQuartz")
@@ -28,8 +31,8 @@ namespace CockQuartz.Model
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             modelBuilder.Entity<JobDetail>()
-                .Property(e => e.Cron)
-                .IsUnicode(false);
+                .HasKey(e => e.Id)
+                .Property(e => e.Id).HasDatabaseGeneratedOption(DatabaseGeneratedOption.Identity);
 
             modelBuilder.Entity<QRTZ_JOB_DETAILS>()
                 .HasMany(e => e.QRTZ_TRIGGERS)
@@ -59,6 +62,8 @@ namespace CockQuartz.Model
                 .HasOptional(e => e.QRTZ_SIMPROP_TRIGGERS)
                 .WithRequired(e => e.QRTZ_TRIGGERS)
                 .WillCascadeOnDelete();
+
+            modelBuilder.DisableFilterGlobally("SoftDelete");
         }
     }
 }

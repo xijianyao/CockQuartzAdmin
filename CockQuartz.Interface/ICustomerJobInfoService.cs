@@ -20,14 +20,16 @@ namespace CockQuartz.Interface
         /// <param name="cron">执行周期表达式</param>
         /// <param name="jobDescription">任务描述</param>
         /// <param name="requestUrl">请求地址</param>
+        /// <param name="exceptionEmail">job错误发送的邮箱</param>
         /// <returns>添加后任务编号</returns>
-        int AddCustomerJobInfo(string jobName, string jobGroupName, string triggerName, string triggerGroupName, string cron, string jobDescription, string requestUrl);
+        int AddCustomerJobInfo(string jobName, string jobGroupName, string triggerName, string triggerGroupName, string cron, string jobDescription, string requestUrl, string exceptionEmail);
+
         /// <summary>
         /// 更新任务
         /// </summary>
-        /// <param name="whereLambda">新的任务模型</param>
+        /// <param name="customerJobInfoModel"></param>
         /// <returns>更新的任务编号</returns>
-        int UpdateCustomerJobInfo(JobDetail Customer_JobInfoModel);
+        int UpdateCustomerJobInfo(JobDetail customerJobInfoModel);
         /// <summary>
         /// 加载任务列表
         /// </summary>

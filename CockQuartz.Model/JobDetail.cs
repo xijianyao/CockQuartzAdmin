@@ -1,3 +1,5 @@
+using FeI.Domain.Entities;
+
 namespace CockQuartz.Model
 {
     using System;
@@ -7,9 +9,8 @@ namespace CockQuartz.Model
     using System.Data.Entity.Spatial;
 
     [Table("JobDetail")]
-    public partial class JobDetail
+    public partial class JobDetail : Entity
     {
-        public Guid Id { get; set; }
 
         [StringLength(50)]
         public string GroupName { get; set; }

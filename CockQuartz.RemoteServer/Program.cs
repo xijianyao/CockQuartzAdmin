@@ -35,7 +35,7 @@ namespace CockQuartz.RemoteServer
             //数据源名称
             properties["quartz.jobStore.dataSource"] = "myDS";
             //连接字符串
-            properties["quartz.dataSource.myDS.connectionString"] = ConfigurationManager.ConnectionStrings["quartz_analyticsEntities"].ToString();
+            properties["quartz.dataSource.myDS.connectionString"] = ConfigurationManager.ConnectionStrings["CockQuartz"].ToString();
             //版本
             properties["quartz.dataSource.myDS.provider"] = "SqlServer";
             properties["quartz.scheduler.instanceId"] = "AUTO";

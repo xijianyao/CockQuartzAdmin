@@ -12,7 +12,7 @@ namespace CockQuartz.Model
         public override void Initialize()
         {
             IocManager.RegisterAssemblyByConvention(Assembly.GetExecutingAssembly());
-            Database.SetInitializer<CockQuartzDbContext>(null);
+            //Database.SetInitializer<CockQuartzDbContext>(null);
         }
     }
 }
