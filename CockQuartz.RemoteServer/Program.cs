@@ -4,6 +4,7 @@ using System.Collections.Specialized;
 using System.Configuration;
 using Microsoft.Owin.Hosting;
 using Quartz;
+using Quartz.Impl.Matchers;
 
 namespace CockQuartz.RemoteServer
 {
@@ -41,8 +42,10 @@ namespace CockQuartz.RemoteServer
             properties["quartz.scheduler.instanceId"] = "AUTO";
             ISchedulerFactory schedulerFactory = new StdSchedulerFactory(properties);
             var scheduler = schedulerFactory.GetScheduler().Result;
-            //scheduler.ListenerManager.AddJobListener(new MyJobListener(), GroupMatcher<JobKey>.AnyGroup());
+            scheduler.ListenerManager.AddJobListener(new JobListener(), GroupMatcher<JobKey>.AnyGroup());
             scheduler.Start();
+            Console.WriteLine(scheduler.SchedulerInstanceId);
+            Console.WriteLine(scheduler.SchedulerName);
 
             var url = "http://+:8080";
             using (WebApp.Start<Startup>(url))

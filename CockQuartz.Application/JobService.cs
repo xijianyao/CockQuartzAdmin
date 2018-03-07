@@ -109,15 +109,20 @@ namespace CockQuartz.Application
         {
             var jobInfo = _jobDetailRepository.FirstOrDefault(x => x.Id == id);
 
-            JobKey jobKey = _createJobKey(jobInfo.JobName, jobInfo.JobGroupName);
+            JobKey jobKey = CreateJobKey(jobInfo.JobName, jobInfo.JobGroupName);
             if (!_scheduler.CheckExists(jobKey).Result)
             {
                 IJobDetail job = JobBuilder.Create<JobBase>()
                     .WithIdentity(jobKey)
-                    .UsingJobData(_createJobDataMap("jobId", jobInfo.Id))
-                    .UsingJobData(_createJobDataMap("requestUrl", jobInfo.RequestUrl))//添加此任务请求地址附带到Context上下文中
-                    .RequestRecovery(true)
+                    //.UsingJobData(CreateJobDataMap("jobId", jobInfo.Id))
+                    //.UsingJobData(CreateJobDataMap("requestUrl", jobInfo.RequestUrl))//添加此任务请求地址附带到Context上下文中
+                    //.RequestRecovery(true)
                     .Build();
+
+                JobDataMap map = job.JobDataMap;
+                map.Put("jobId", jobInfo.Id);
+                map.Put("requestUrl", jobInfo.RequestUrl);
+
 
                 CronScheduleBuilder scheduleBuilder = CronScheduleBuilder.CronSchedule(jobInfo.Cron);
                 ITrigger trigger = TriggerBuilder.Create().StartNow()//StartAt(DateTime.SpecifyKind(jobInfo.JobStartTime, DateTimeKind.Local))
@@ -157,8 +162,8 @@ withMisfireHandlingInstructionFireAndProceed
         {
             var jobInfo = _jobDetailRepository.FirstOrDefault(x => x.Id == id);
 
-            var jobKey = _createJobKey(jobInfo.JobName, jobInfo.JobGroupName);
-            var triggerKey = _createTriggerKey(jobInfo.TriggerName, jobInfo.TriggerGroupName);
+            var jobKey = CreateJobKey(jobInfo.JobName, jobInfo.JobGroupName);
+            var triggerKey = CreateTriggerKey(jobInfo.TriggerName, jobInfo.TriggerGroupName);
             _scheduler.PauseTrigger(triggerKey);
             _scheduler.UnscheduleJob(triggerKey);
             _scheduler.DeleteJob(jobKey);
@@ -175,7 +180,7 @@ withMisfireHandlingInstructionFireAndProceed
         public bool PauseJob(int id)
         {
             var jobInfo = _jobDetailRepository.FirstOrDefault(x => x.Id == id);
-            var jobKey = _createJobKey(jobInfo.JobName, jobInfo.JobGroupName);
+            var jobKey = CreateJobKey(jobInfo.JobName, jobInfo.JobGroupName);
             _scheduler.PauseJob(jobKey);
             return true;
         }
@@ -187,7 +192,7 @@ withMisfireHandlingInstructionFireAndProceed
         /// <returns></returns>
         public bool ResumeJob(JobDetail jobInfo)
         {
-            var jobKey = _createJobKey(jobInfo.JobName, jobInfo.JobGroupName);
+            var jobKey = CreateJobKey(jobInfo.JobName, jobInfo.JobGroupName);
             _scheduler.ResumeJob(jobKey);
             return true;
 
@@ -204,7 +209,7 @@ withMisfireHandlingInstructionFireAndProceed
             var jobInfo = _jobDetailRepository.FirstOrDefault(x => x.Id == id);
 
             CronScheduleBuilder scheduleBuilder = CronScheduleBuilder.CronSchedule(jobInfo.Cron);
-            var triggerKey = _createTriggerKey(jobInfo.TriggerName, jobInfo.TriggerGroupName);
+            var triggerKey = CreateTriggerKey(jobInfo.TriggerName, jobInfo.TriggerGroupName);
             ITrigger trigger = TriggerBuilder.Create().StartNow()
                     .WithIdentity(jobInfo.TriggerName, jobInfo.TriggerGroupName)
                     .WithSchedule(scheduleBuilder.WithMisfireHandlingInstructionDoNothing())
@@ -215,46 +220,18 @@ withMisfireHandlingInstructionFireAndProceed
             return true;
         }
 
-        /// <summary>
-        /// 获取单个任务状态（从scheduler获取）
-        /// </summary>
-        /// <param name="triggerName"></param>
-        /// <param name="triggerGroupName"></param>
-        /// <returns></returns>
-        private TriggerState _getTriggerState(string triggerName, string triggerGroupName)
-        {
 
-            TriggerKey triggerKey = _createTriggerKey(triggerName, triggerGroupName);
-            var triggerState = _scheduler.GetTriggerState(triggerKey).Result;
-
-            return triggerState;
-        }
-
-        private JobKey _createJobKey(string jobName, string jobGroupName)
+        private JobKey CreateJobKey(string jobName, string jobGroupName)
         {
             return new JobKey(jobName, jobGroupName);
 
         }
-        private TriggerKey _createTriggerKey(string triggerName, string triggerGroupName)
+        private TriggerKey CreateTriggerKey(string triggerName, string triggerGroupName)
         {
             return new TriggerKey(triggerName, triggerGroupName);
         }
-        private int _changeType(TriggerState triggerState)
-        {
-            switch (triggerState)
-            {
-                case TriggerState.None: return -1;
-                case TriggerState.Normal: return 0;
-                case TriggerState.Paused: return 1;
-                case TriggerState.Complete: return 2;
-                case TriggerState.Error: return 3;
-                case TriggerState.Blocked: return 4;
-                default: return -1;
-            }
 
-        }
-
-        private JobDataMap _createJobDataMap<T>(string propertyName, T propertyValue)
+        private JobDataMap CreateJobDataMap<T>(string propertyName, T propertyValue)
         {
             return new JobDataMap(new Dictionary<string, T>() { { propertyName, propertyValue } });
         }
