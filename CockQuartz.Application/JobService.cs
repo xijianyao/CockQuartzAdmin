@@ -1,29 +1,114 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Reflection;
+using System.Data.Entity;
+using System.Globalization;
+using System.Linq;
 using CockQuartz.Interface;
 using CockQuartz.Model;
 using FeI.Application;
+using FeI.Domain.Repositories;
 using Quartz;
+using Quartz.Impl.Matchers;
 
 namespace CockQuartz.Application
 {
     public class JobService : ApplicationService, IJobService
     {
         private readonly IScheduler _scheduler;
+        private readonly IRepository<JobDetail> _jobDetailRepository;
 
-        public JobService()
+        public JobService(IRepository<JobDetail> jobDetailRepository)
         {
+            _jobDetailRepository = jobDetailRepository;
             _scheduler = SchedulerManager.Instance;
+        }
+
+        public int CreateJob(JobDetail job)
+        {
+            job.CreateTime = DateTime.Now;
+            return _jobDetailRepository.InsertAndGetId(job);
+        }
+
+        /// <summary>
+        /// /获取任务列表
+        /// </summary>
+        /// <returns></returns>
+        public List<JobDetailOutputDto> GetJobList()
+        {
+            var jobList = _jobDetailRepository.Query().AsNoTracking()
+                .Where(x => !x.IsDeleted).ToList();
+            var result = new List<JobDetailOutputDto>();
+            foreach (var groupName in _scheduler.GetJobGroupNames().Result)
+            {
+                foreach (JobKey jobKey in _scheduler.GetJobKeys(GroupMatcher<JobKey>.GroupEquals(groupName)).Result)
+                {
+                    var triggers = _scheduler.GetTriggersOfJob(jobKey).Result.ToList();
+                    foreach (var item in triggers)
+                    {
+                        var jobViewModel = new JobDetailOutputDto();
+                        jobViewModel.JobName = jobKey.Name;
+                        jobViewModel.JobGroupName = jobKey.Group;
+                        jobViewModel.TriggerGroupName = item.Key.Group;
+                        jobViewModel.TriggerName = item.Key.Name;
+                        jobViewModel.CurrentStatus = GetJobStatusByKey(item.Key);
+                        jobViewModel.NextRunTime = item.GetNextFireTimeUtc() == null
+                            ? "下次不会触发运行时间"
+                            : item.GetNextFireTimeUtc()?.LocalDateTime.ToString(CultureInfo.InvariantCulture);
+                        jobViewModel.LastRunTime = item.GetPreviousFireTimeUtc() == null
+                            ? "还未运行过"
+                            : item.GetPreviousFireTimeUtc()?.LocalDateTime.ToString(CultureInfo.InvariantCulture);
+
+                        var jobInfo = jobList.FirstOrDefault(x =>
+                            x.JobName == jobKey.Name && x.JobGroupName == jobKey.Group);
+                        jobViewModel.Cron = jobInfo.Cron;
+                        jobViewModel.Id = jobInfo.Id;
+                        jobViewModel.IsInSchedule = true;
+                        result.Add(jobViewModel);
+                    }
+                }
+            }
+
+
+            foreach (var item in result)
+            {
+                var jobInfo = jobList.FirstOrDefault(x => x.JobName == item.JobName && x.JobGroupName == item.JobGroupName);
+                if (jobInfo != null)
+                {
+                    jobList.Remove(jobInfo);
+                }
+            }
+
+            if (jobList.Count > 0)
+            {
+                foreach (var item in jobList)
+                {
+                    var jobViewModel = new JobDetailOutputDto(); ;
+                    jobViewModel.JobName = item.JobName;
+                    jobViewModel.JobGroupName = item.JobGroupName;
+                    jobViewModel.TriggerGroupName = item.TriggerGroupName;
+                    jobViewModel.TriggerName = item.TriggerGroupName;
+                    jobViewModel.CurrentStatus = "还未加入计划中";
+                    jobViewModel.NextRunTime = "无";
+                    jobViewModel.LastRunTime = "无";
+                    jobViewModel.Cron = item.Cron;
+                    jobViewModel.Id = item.Id;
+                    jobViewModel.IsInSchedule = false;
+                    result.Add(jobViewModel);
+                }
+            }
+
+            return result;
         }
 
         /// <summary>
         /// 运行任务
         /// </summary>
-        /// <param name="jobInfo">任务信息</param>
+        /// <param name="id">任务信息</param>
         /// <returns></returns>
-        public bool RunJob(JobDetail jobInfo)
+        public bool RunJob(int id)
         {
+            var jobInfo = _jobDetailRepository.FirstOrDefault(x => x.Id == id);
+
             JobKey jobKey = _createJobKey(jobInfo.JobName, jobInfo.JobGroupName);
             if (!_scheduler.CheckExists(jobKey).Result)
             {
@@ -31,6 +116,7 @@ namespace CockQuartz.Application
                     .WithIdentity(jobKey)
                     .UsingJobData(_createJobDataMap("jobId", jobInfo.Id))
                     .UsingJobData(_createJobDataMap("requestUrl", jobInfo.RequestUrl))//添加此任务请求地址附带到Context上下文中
+                    .RequestRecovery(true)
                     .Build();
 
                 CronScheduleBuilder scheduleBuilder = CronScheduleBuilder.CronSchedule(jobInfo.Cron);
@@ -64,26 +150,31 @@ withMisfireHandlingInstructionFireAndProceed
         /// <summary>
         /// 删除任务
         /// </summary>
-        /// <param name="jobInfo">任务信息</param>
+        /// <param name="id">任务信息</param>
         /// <returns></returns>
 
-        public bool DeleteJob(JobDetail jobInfo)
+        public bool DeleteJob(int id)
         {
+            var jobInfo = _jobDetailRepository.FirstOrDefault(x => x.Id == id);
+
             var jobKey = _createJobKey(jobInfo.JobName, jobInfo.JobGroupName);
             var triggerKey = _createTriggerKey(jobInfo.TriggerName, jobInfo.TriggerGroupName);
             _scheduler.PauseTrigger(triggerKey);
             _scheduler.UnscheduleJob(triggerKey);
             _scheduler.DeleteJob(jobKey);
+
+            _jobDetailRepository.Delete(jobInfo);
             return true;
         }
 
         /// <summary>
         /// 暂停任务
         /// </summary>
-        /// <param name="jobInfo">任务信息</param>
+        /// <param name="id">任务信息</param>
         /// <returns></returns>
-        public bool PauseJob(JobDetail jobInfo)
+        public bool PauseJob(int id)
         {
+            var jobInfo = _jobDetailRepository.FirstOrDefault(x => x.Id == id);
             var jobKey = _createJobKey(jobInfo.JobName, jobInfo.JobGroupName);
             _scheduler.PauseJob(jobKey);
             return true;
@@ -101,22 +192,29 @@ withMisfireHandlingInstructionFireAndProceed
             return true;
 
         }
+
         /// <summary>
         /// 更改任务运行周期
         /// </summary>
-        /// <param name="jobInfo">任务信息</param>
+        /// <param name="id"></param>
+        /// <param name="cron"></param>
         /// <returns></returns>
-        public bool ModifyJobCron(JobDetail jobInfo)
+        public bool ModifyJobCron(int id, string cron)
         {
+            var jobInfo = _jobDetailRepository.FirstOrDefault(x => x.Id == id);
+
             CronScheduleBuilder scheduleBuilder = CronScheduleBuilder.CronSchedule(jobInfo.Cron);
             var triggerKey = _createTriggerKey(jobInfo.TriggerName, jobInfo.TriggerGroupName);
             ITrigger trigger = TriggerBuilder.Create().StartNow()
                     .WithIdentity(jobInfo.TriggerName, jobInfo.TriggerGroupName)
-                   .WithSchedule(scheduleBuilder.WithMisfireHandlingInstructionDoNothing())
+                    .WithSchedule(scheduleBuilder.WithMisfireHandlingInstructionDoNothing())
                     .Build();
             _scheduler.RescheduleJob(triggerKey, trigger);
+            jobInfo.Cron = cron;
+            _jobDetailRepository.Update(jobInfo);
             return true;
         }
+
         /// <summary>
         /// 获取单个任务状态（从scheduler获取）
         /// </summary>
@@ -132,44 +230,6 @@ withMisfireHandlingInstructionFireAndProceed
             return triggerState;
         }
 
-        /// <summary>
-        /// /获取任务列表
-        /// </summary>
-        /// <param name="JobDetailList"></param>
-        /// <param name="jobStatus">当前任务状态</param>
-        /// <param name="pageIndex">当前索引页</param>
-        /// <param name="pageSize">每页数量</param>
-        /// <returns></returns>
-        public object GetJobList(List<JobDetail> JobDetailList, int jobStatus, int pageIndex, int pageSize)
-        {
-            //var allJobList = JobDetailList.Select(x => new
-            //{
-            //    x.Id,
-            //    x.JobName,
-            //    x.JobGroupName,
-            //    x.TriggerName,
-            //    x.TriggerGroupName,
-            //    x.Description,
-            //    x.Cron,
-            //    CreateTime = x.CreateTime.ToString("yyyy-MM-dd HH:mm:ss"),
-            //    x.Deleted,
-            //    TriggerState = _changeType(_getTriggerState(x.TriggerName, x.TriggerGroupName))
-            //}).ToList();
-            //allJobList = jobStatus == 5 || jobStatus == -1 ? allJobList.Where(x => x.Customer_TriggerState == jobStatus).ToList() : allJobList.Where(x => x.TriggerState == jobStatus).ToList();
-            //return allJobList.Select(x => new
-            //{
-            //    x.Id,
-            //    x.JobName,
-            //    x.JobGroupName,
-            //    x.TriggerName,
-            //    x.TriggerGroupName,
-            //    x.Description,
-            //    x.Cron,
-            //    x.JobStartTime,
-            //    //x.CreateTime
-            //});
-            return null;
-        }
         private JobKey _createJobKey(string jobName, string jobGroupName)
         {
             return new JobKey(jobName, jobGroupName);
@@ -193,9 +253,16 @@ withMisfireHandlingInstructionFireAndProceed
             }
 
         }
+
         private JobDataMap _createJobDataMap<T>(string propertyName, T propertyValue)
         {
             return new JobDataMap(new Dictionary<string, T>() { { propertyName, propertyValue } });
+        }
+
+        private string GetJobStatusByKey(TriggerKey triggerKey)
+        {
+            var status = _scheduler.GetTriggerState(triggerKey).Result;
+            return status.ToString();
         }
     }
 }

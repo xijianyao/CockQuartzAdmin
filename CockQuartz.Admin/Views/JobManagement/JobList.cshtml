@@ -1,0 +1,220 @@
+﻿
+@{
+    Layout = null;
+}
+@model List<CockQuartz.Interface.JobDetailOutputDto>
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>JobList</title>
+    <script src="~/WebResource/js/jquery-1.9.1.min.js" type="text/javascript"></script>
+    <script src="~/WebResource/js/layer/layer.min.js" type="text/javascript"></script>
+    <script src="~/WebResource/js/layer/extend/layer.ext.js" type="text/javascript"></script>
+    <style type="text/css">
+        table.hovertable {
+            font-family: verdana,arial,sans-serif;
+            font-size: 11px;
+            color: #333333;
+            border-width: 1px;
+            border-color: #999999;
+            border-collapse: collapse;
+        }
+
+            table.hovertable th {
+                background-color: #c3dde0;
+                border-width: 1px;
+                padding: 8px;
+                border-style: solid;
+                border-color: #a9c6c9;
+            }
+
+            table.hovertable tr {
+                background-color: #d4e3e5;
+            }
+
+            table.hovertable td {
+                border-width: 1px;
+                padding: 8px;
+                border-style: solid;
+                border-color: #a9c6c9;
+            }
+    </style>
+</head>
+<body style="height: 320px">
+    <h1 style="text-align: center">
+        <strong>Job控制界面</strong>
+    </h1>
+    <div style="text-align: center">
+        <a href="~/CronHelp.htm" target="_blank">Cron表达式帮助页面</a>
+    </div>
+    <div style="width: 75%; margin: 0 auto; text-align: right; height: 30px; line-height: 20px">
+        <input type="button" id="btnAddJob" value="添加Job" style="text-align: right; display: inline-block;
+                                                                                                                                                                                                                                                                                                                                                  margin-bottom: 10px;" />
+        <table class="hovertable" align="center" style="text-align: center;">
+            <thead>
+                <tr>
+                    <th>
+                        Job名称
+                    </th>
+                    <th>
+                        Job分组
+                    </th>
+                    <th>
+                        当前状态
+                    </th>
+                    <th>
+                        Cron表达式
+                    </th>
+                    <th>
+                        上次运行时间
+                    </th>
+                    <th>
+                        下次运行时间
+                    </th>
+                    <th>
+                        操作
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model != null && Model.Any())
+                {
+                    foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>
+                                @item.JobName
+                            </td>
+                            <td>
+                                @item.JobGroupName
+                            </td>
+                            <td class="status">
+                                @item.CurrentStatus
+                            </td>
+                            <td>
+                                @item.Cron
+                            </td>
+                            <td>
+                                @item.LastRunTime
+                            </td>
+                            <td>
+                                @item.NextRunTime
+                            </td>
+                            <td data-jobId='@item.Id'>
+                                @if (item.CurrentStatus != "Normal")
+                                {
+                                    <a class="btnRun" href="">计划运行</a>
+                                }
+                                else
+                                {
+                                    <a href="" class="btnStop">计划停止</a>
+                                }
+                                | <a class="btnDelete" href="">删除Job</a> | <a class="btnEdit" href="">修改计划</a> |
+                                @if (item.IsInSchedule)
+                                {
+                                    <a target="_blank" href="../JobDetail.aspx?jobname=<%= item.JobName%>&jobgroup=<%= item.JobGroup%>"
+                                       class="btnView">查看日志</a>
+                                }
+                            </td>
+                        </tr>
+                    }
+                }
+
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $(".status").each(function () {
+            if ($(this).html().trim() == "Normal") {
+                $(this).attr("style", "color:Green");
+            } else if ($(this).html().trim() == "Paused") {
+                $(this).attr("style", "color:#FFA500");
+            } else if ($(this).html().trim() == "还未加入计划中") {
+                $(this).attr("style", "color:Black");
+            } else {
+                $(this).attr("style", "color:Red");
+            }
+        });
+        $("table tbody tr").hover(
+            function () {
+                $(this).css("backgroundColor", "#ffff66");
+            },
+
+            function () {
+                $(this).css("backgroundColor", "#d4e3e5");
+            });
+
+        $(".btnRun").on("click", function (e) {
+            e.preventDefault();
+            $.ajax({
+                url: '@Url.Action("RunJob","JobManagement")',
+                type: 'POST',
+                data: { id: $(this).parent().attr("data-jobid") },
+                success: function (data) {
+                    alert(data.message);
+                },
+            });
+        });
+
+        $(".btnStop").on("click", function (e) {
+            e.preventDefault();
+            $.ajax({
+                url: '@Url.Action("PauseJob","JobManagement")',
+                type: 'POST',
+                data: { id: $(this).parent().attr("data-jobid") },
+                success: function (data) {
+                    alert(data.message);
+                },
+            });
+        });
+
+        $(".btnDelete").on("click", function (e) {
+            e.preventDefault();
+            if (confirm("确定要删除吗")) {
+                $.ajax({
+                    url: '@Url.Action("DeleteJob","JobManagement")',
+                    type: 'POST',
+                    data: { id: $(this).parent().attr("data-jobid") },
+                    success: function (data) {
+                        alert(data.message);
+                    },
+                });
+            }
+        });
+
+        $(".btnEdit").on("click", function (e) {
+            e.preventDefault();
+            var $this = $(this);
+            layer.prompt({
+                title: '请输入新的Cron表达式（修改成功后，该job会重新启动，新计划将生效）'
+            }, function (value) {
+                $.ajax({
+                    url: '@Url.Action("ModifyJobCron", "JobManagement")',
+                    type: 'POST',
+                    data: { id: $this.parent().attr("data-jobid"), cron: value },
+                    success: function (data) {
+                        alert(data.message);
+                    }
+                });                
+            });
+        });
+
+        $("#btnAddJob").on("click", function () {
+            $.layer({
+                type: 2,
+                border: [0],
+                title: "新建Job",
+                shadeClose: false,
+                closeBtn: [0, true],
+                iframe: { src: '@Url.Action("CreateJob","JobManagement")' },
+                area: ['700px', '600px']
+            });
+        });
+    });
+</script>

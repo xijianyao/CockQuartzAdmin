@@ -270,8 +270,22 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="CronHelp.htm" />
     <Content Include="Global.asax" />
     <Content Include="Web.config" />
+    <Content Include="WebResource\js\jquery-1.9.1.min.js" />
+    <Content Include="WebResource\js\layer\extend\layer.ext.js" />
+    <Content Include="WebResource\js\layer\layer.min.js" />
+    <Content Include="WebResource\js\layer\skin\default\icon_ext.png" />
+    <Content Include="WebResource\js\layer\skin\default\textbg.png" />
+    <Content Include="WebResource\js\layer\skin\default\xubox_ico0.png" />
+    <Content Include="WebResource\js\layer\skin\default\xubox_loading0.gif" />
+    <Content Include="WebResource\js\layer\skin\default\xubox_loading1.gif" />
+    <Content Include="WebResource\js\layer\skin\default\xubox_loading2.gif" />
+    <Content Include="WebResource\js\layer\skin\default\xubox_loading3.gif" />
+    <Content Include="WebResource\js\layer\skin\default\xubox_title0.png" />
+    <Content Include="WebResource\js\layer\skin\layer.css" />
+    <Content Include="WebResource\js\layer\skin\layer.ext.css" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\RouteConfig.cs" />
@@ -289,6 +303,8 @@
     <Content Include="Views\web.config" />
     <None Include="packages.config" />
     <Content Include="Views\JobManagement\Index.cshtml" />
+    <Content Include="Views\JobManagement\JobList.cshtml" />
+    <Content Include="Views\JobManagement\CreateJob.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

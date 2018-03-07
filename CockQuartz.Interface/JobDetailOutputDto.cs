@@ -36,6 +36,8 @@ namespace CockQuartz.Interface
 
         public string ExceptionEmail { get; set; }
 
+        public bool IsInSchedule { get; set; }
+
         public bool IsDeleted { get; set; }
     }
 }

@@ -163,7 +163,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ICustomerJobInfoService.cs" />
     <Compile Include="IJobService.cs" />
     <Compile Include="JobDetailOutputDto.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
