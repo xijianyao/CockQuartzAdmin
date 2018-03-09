@@ -12,8 +12,9 @@ namespace CockQuartz.RemoteServer
     {
         static void Main(string[] args)
         {
-            var properties = PropertiesConfig();
-            ISchedulerFactory schedulerFactory = new StdSchedulerFactory(properties);
+            //var properties = PropertiesConfig();
+            //ISchedulerFactory schedulerFactory = new StdSchedulerFactory(properties);
+            ISchedulerFactory schedulerFactory = new StdSchedulerFactory();
             var scheduler = schedulerFactory.GetScheduler().Result;
             //scheduler.ListenerManager.AddJobListener(new JobListener(), GroupMatcher<JobKey>.AnyGroup());
             scheduler.Start();
@@ -39,7 +40,7 @@ namespace CockQuartz.RemoteServer
                 ["quartz.threadPool.threadPriority"] = "Normal",
                 ["quartz.scheduler.exporter.type"] = "Quartz.Simpl.RemotingSchedulerExporter, Quartz", //集群配置
                 ["quartz.scheduler.exporter.port"] = "555",//端口号
-                ["quartz.scheduler.exporter.bindName"] = "QuartzScheduler1",
+                ["quartz.scheduler.exporter.bindName"] = "QuartzScheduler",
                 ["quartz.scheduler.exporter.channelType"] = "tcp",//通道类型
                 ["quartz.scheduler.exporter.channelName"] = "httpQuartz",
                 ["quartz.scheduler.exporter.rejectRemoteRequests"] = "true",

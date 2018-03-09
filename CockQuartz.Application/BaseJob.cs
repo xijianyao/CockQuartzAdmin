@@ -2,6 +2,7 @@
 using System.Net.Http;
 using System.Threading.Tasks;
 using Quartz;
+using ServiceClients;
 
 namespace CockQuartz.Application
 {
@@ -18,10 +19,12 @@ namespace CockQuartz.Application
         {
             try
             {
+                var serviceClient = new ServiceClient();
+
                 Console.WriteLine($"job begin:{context.JobDetail.JobDataMap["requestUrl"]}");
-                //await _serviceClient.RequestAsync(context.JobDetail.JobDataMap["requestUrl"].ToString(), HttpVerb.Get);
-                HttpClient hc = new HttpClient();
-                await hc.GetAsync(context.JobDetail.JobDataMap["requestUrl"].ToString());
+                await serviceClient.RequestAsync(context.JobDetail.JobDataMap["requestUrl"].ToString(), HttpVerb.Get);
+                //HttpClient hc = new HttpClient();
+                //await hc.GetAsync(context.JobDetail.JobDataMap["requestUrl"].ToString());
                 Console.WriteLine($"job end:{context.JobDetail.JobDataMap["requestUrl"]}");
                 //context.JobDetail.JobDataMap["message1"] = $"job begin:{context.JobDetail.JobDataMap["requestUrl"]}";
                 //Console.WriteLine($"job begin:{context.JobDetail.JobDataMap["requestUrl"]}");
