@@ -12,7 +12,7 @@ namespace CockQuartz.Application
         static readonly ConcurrentDictionary<string, IScheduler> ConnectionCache = new ConcurrentDictionary<string, IScheduler>();
         const string channelType = "tcp";
         const string localIp = "127.0.0.1";
-        const string port = "555";
+        const string port = "556";
         const string bindName = "QuartzScheduler";
         public static IScheduler Instance
         {

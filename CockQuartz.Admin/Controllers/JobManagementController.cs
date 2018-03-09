@@ -64,6 +64,20 @@ namespace CockQuartzAdmin.Controllers
         }
 
         [HttpPost]
+        public JsonResult StartJob(int id)
+        {
+            _jobService.StartJob(id);
+            return Json(new { success = true, message = "成功" });
+        }
+
+        [HttpPost]
+        public JsonResult ResumeJob(int id)
+        {
+            _jobService.ResumeJob(id);
+            return Json(new { success = true, message = "成功" });
+        }
+
+        [HttpPost]
         public JsonResult ModifyJobCron(int id, string cron)
         {
             _jobService.ModifyJobCron(id, cron);

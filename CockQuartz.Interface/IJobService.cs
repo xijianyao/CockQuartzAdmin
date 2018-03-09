@@ -46,10 +46,9 @@ namespace CockQuartz.Interface
 
         /// <summary>
         /// 恢复任务
-        /// </summary>
-        /// <param name="jobInfo">任务信息</param>
+        /// </summary>        
         /// <returns></returns>
-        bool ResumeJob(JobDetail jobInfo);
+        bool ResumeJob(int id);
 
         /// <summary>
         /// 更改任务运行周期
@@ -58,5 +57,12 @@ namespace CockQuartz.Interface
         /// <param name="cron"></param>
         /// <returns></returns>
         bool ModifyJobCron(int id, string cron);
+
+        /// <summary>
+        /// 立即执行
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        bool StartJob(int id);
     }
 }

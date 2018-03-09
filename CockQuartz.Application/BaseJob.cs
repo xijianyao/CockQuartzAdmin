@@ -2,27 +2,26 @@
 using System.Net.Http;
 using System.Threading.Tasks;
 using Quartz;
-using ServiceClients;
 
 namespace CockQuartz.Application
 {
     public class JobBase : IJob
     {
-        private readonly IServiceClient _serviceClient;
+        //private readonly IServiceClient _serviceClient;
 
-        public JobBase(IServiceClient serviceClient)
-        {
-            _serviceClient = serviceClient;
-        }
+        //public JobBase(IServiceClient serviceClient)
+        //{
+        //    _serviceClient = serviceClient;
+        //}
 
         public async Task Execute(IJobExecutionContext context)
         {
             try
             {
                 Console.WriteLine($"job begin:{context.JobDetail.JobDataMap["requestUrl"]}");
-                await _serviceClient.RequestAsync(context.JobDetail.JobDataMap["requestUrl"].ToString(), HttpVerb.Get);
-                //HttpClient hc = new HttpClient();
-                //await hc.GetAsync(context.JobDetail.JobDataMap["requestUrl"].ToString());
+                //await _serviceClient.RequestAsync(context.JobDetail.JobDataMap["requestUrl"].ToString(), HttpVerb.Get);
+                HttpClient hc = new HttpClient();
+                await hc.GetAsync(context.JobDetail.JobDataMap["requestUrl"].ToString());
                 Console.WriteLine($"job end:{context.JobDetail.JobDataMap["requestUrl"]}");
                 //context.JobDetail.JobDataMap["message1"] = $"job begin:{context.JobDetail.JobDataMap["requestUrl"]}";
                 //Console.WriteLine($"job begin:{context.JobDetail.JobDataMap["requestUrl"]}");

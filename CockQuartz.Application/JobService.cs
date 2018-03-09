@@ -117,6 +117,7 @@ namespace CockQuartz.Application
                     //.UsingJobData(CreateJobDataMap("jobId", jobInfo.Id))
                     //.UsingJobData(CreateJobDataMap("requestUrl", jobInfo.RequestUrl))//添加此任务请求地址附带到Context上下文中
                     //.RequestRecovery(true)
+                    .WithDescription(jobInfo.Description)
                     .Build();
 
                 JobDataMap map = job.JobDataMap;
@@ -129,6 +130,7 @@ namespace CockQuartz.Application
                     .WithIdentity(jobInfo.TriggerName, jobInfo.TriggerGroupName)
                     .ForJob(jobKey)
                     .WithSchedule(scheduleBuilder.WithMisfireHandlingInstructionDoNothing())
+                    .WithDescription(jobInfo.Description)
                     .Build();
                 #region Quartz 任务miss之后三种操作
                 /*
@@ -152,6 +154,7 @@ withMisfireHandlingInstructionFireAndProceed
             return true;
 
         }
+
         /// <summary>
         /// 删除任务
         /// </summary>
@@ -188,14 +191,25 @@ withMisfireHandlingInstructionFireAndProceed
         /// <summary>
         /// 恢复任务
         /// </summary>
-        /// <param name="jobInfo">任务信息</param>
         /// <returns></returns>
-        public bool ResumeJob(JobDetail jobInfo)
+        public bool ResumeJob(int id)
         {
+            var jobInfo = _jobDetailRepository.FirstOrDefault(x => x.Id == id);
             var jobKey = CreateJobKey(jobInfo.JobName, jobInfo.JobGroupName);
             _scheduler.ResumeJob(jobKey);
             return true;
+        }
 
+        /// <summary>
+        /// 立即执行
+        /// </summary>
+        /// <returns></returns>
+        public bool StartJob(int id)
+        {
+            var jobInfo = _jobDetailRepository.FirstOrDefault(x => x.Id == id);
+            var jobKey = CreateJobKey(jobInfo.JobName, jobInfo.JobGroupName);
+            _scheduler.TriggerJob(jobKey);
+            return true;
         }
 
         /// <summary>

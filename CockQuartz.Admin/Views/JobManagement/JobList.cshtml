@@ -104,13 +104,18 @@
                                 @item.NextRunTime
                             </td>
                             <td data-jobId='@item.Id'>
-                                @if (item.CurrentStatus != "Normal")
+                                @if (!item.IsInSchedule)
                                 {
                                     <a class="btnRun" href="">计划运行</a>
                                 }
-                                else
+                                @if (item.CurrentStatus == "Normal")
                                 {
-                                    <a href="" class="btnStop">计划停止</a>
+                                    <div>|</div><a href="" class="btnStart">立即执行</a>
+                                    <div>|</div><a href="" class="btnStop">停止</a>
+                                }
+                                @if (item.CurrentStatus == "Paused")
+                                {
+                                    <div>|</div><a href="" class="btnResume">恢复运行</a>
                                 }
                                 | <a class="btnDelete" href="">删除Job</a> | <a class="btnEdit" href="">修改计划</a> |
                                 @if (item.IsInSchedule)
@@ -174,6 +179,30 @@
             });
         });
 
+        $(".btnResume").on("click", function (e) {
+            e.preventDefault();
+            $.ajax({
+                url: '@Url.Action("ResumeJob", "JobManagement")',
+                type: 'POST',
+                data: { id: $(this).parent().attr("data-jobid") },
+                success: function (data) {
+                    alert(data.message);
+                },
+            });
+        });
+
+        $(".btnStart").on("click", function (e) {
+            e.preventDefault();
+            $.ajax({
+                url: '@Url.Action("StartJob", "JobManagement")',
+                type: 'POST',
+                data: { id: $(this).parent().attr("data-jobid") },
+                success: function (data) {
+                    alert(data.message);
+                },
+            });
+        });
+
         $(".btnDelete").on("click", function (e) {
             e.preventDefault();
             if (confirm("确定要删除吗")) {
@@ -201,7 +230,7 @@
                     success: function (data) {
                         alert(data.message);
                     }
-                });                
+                });
             });
         });
 
