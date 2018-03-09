@@ -1,5 +1,6 @@
 ﻿using System.Collections.Concurrent;
 using System.Collections.Specialized;
+using System.Configuration;
 using Quartz;
 using Quartz.Impl;
 
@@ -9,11 +10,11 @@ namespace CockQuartz.Application
     {
         static readonly object Locker = new object();
         static IScheduler _scheduler;
-        static readonly ConcurrentDictionary<string, IScheduler> ConnectionCache = new ConcurrentDictionary<string, IScheduler>();
-        const string channelType = "tcp";
-        const string localIp = "127.0.0.1";
-        const string port = "556";
-        const string bindName = "QuartzScheduler";
+        public static readonly ConcurrentDictionary<string, IScheduler> ConnectionCache = new ConcurrentDictionary<string, IScheduler>();
+
+        private static readonly string quartzScheduler1_Address = ConfigurationManager.AppSettings["QuartzProxyAddress1"];
+        private static readonly string quartzScheduler2_Address = ConfigurationManager.AppSettings["QuartzProxyAddress1"];
+
         public static IScheduler Instance
         {
             get
@@ -24,25 +25,36 @@ namespace CockQuartz.Application
                     {
                         if (_scheduler == null)
                         {
-                            _scheduler = GetScheduler(localIp);
+                            _scheduler = GetScheduler();
                         }
                     }
                 }
                 return _scheduler;
             }
         }
-        public static IScheduler GetScheduler(string ip)
+
+        public static IScheduler GetScheduler()
         {
-            if (!ConnectionCache.ContainsKey(ip))
+            if (!ConnectionCache.ContainsKey(quartzScheduler1_Address))
             {
                 var properties = new NameValueCollection();
                 properties["quartz.scheduler.proxy"] = "true";
-                properties["quartz.scheduler.proxy.address"] = $"{channelType}://{localIp}:{port}/{bindName}";
+                properties["quartz.scheduler.proxy.address"] = quartzScheduler1_Address;
                 var schedulerFactory = new StdSchedulerFactory(properties);
                 _scheduler = schedulerFactory.GetScheduler().Result;
-                ConnectionCache[ip] = _scheduler;
+                ConnectionCache[quartzScheduler1_Address] = _scheduler;
             }
-            return ConnectionCache[ip];
+            if (!ConnectionCache.ContainsKey(quartzScheduler2_Address))
+            {
+                var properties = new NameValueCollection();
+                properties["quartz.scheduler.proxy"] = "true";
+                properties["quartz.scheduler.proxy.address"] = quartzScheduler2_Address;
+                var schedulerFactory = new StdSchedulerFactory(properties);
+                _scheduler = schedulerFactory.GetScheduler().Result;
+                ConnectionCache[quartzScheduler2_Address] = _scheduler;
+            }
+
+            return ConnectionCache[quartzScheduler1_Address];
         }
 
     }

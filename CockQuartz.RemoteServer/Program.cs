@@ -1,10 +1,8 @@
 ﻿using System;
 using Quartz.Impl;
-using System.Collections.Specialized;
 using System.Configuration;
 using Microsoft.Owin.Hosting;
 using Quartz;
-using Quartz.Impl.Matchers;
 
 namespace CockQuartz.RemoteServer
 {
@@ -19,7 +17,7 @@ namespace CockQuartz.RemoteServer
             Console.WriteLine(scheduler.SchedulerInstanceId);
             Console.WriteLine(scheduler.SchedulerName);
 
-            var url = "http://+:8080";
+            var url = ConfigurationManager.AppSettings["owinUrl"];
             using (WebApp.Start<Startup>(url))
             {
                 Console.WriteLine("Running on {0}", url);

@@ -35,6 +35,11 @@ namespace CockQuartz.Application
         /// <returns></returns>
         public List<JobDetailOutputDto> GetJobList()
         {
+            if (_scheduler == null)
+            {
+                return null;
+            }
+
             var jobList = _jobDetailRepository.Query().AsNoTracking()
                 .Where(x => !x.IsDeleted).ToList();
             var result = new List<JobDetailOutputDto>();
