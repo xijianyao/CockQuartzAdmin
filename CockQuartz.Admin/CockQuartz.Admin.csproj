@@ -305,6 +305,7 @@
     <Content Include="Views\JobManagement\Index.cshtml" />
     <Content Include="Views\JobManagement\JobList.cshtml" />
     <Content Include="Views\JobManagement\CreateJob.cshtml" />
+    <Content Include="Views\JobManagement\JobLogList.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

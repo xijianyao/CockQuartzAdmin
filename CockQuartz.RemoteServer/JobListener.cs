@@ -48,7 +48,7 @@ namespace CockQuartz.RemoteServer
 
                 context.JobDetail.JobDataMap.Put("requestUrl", jobDetail.RequestUrl);
                 context.JobDetail.JobDataMap.Put("jobName", jobDetail.JobName);
-                context.JobDetail.JobDataMap.Put("exceptionEmail", jobDetail.ExceptionEmail); 
+                context.JobDetail.JobDataMap.Put("exceptionEmail", jobDetail.ExceptionEmail);
                 context.JobDetail.JobDataMap.Put("jobGroupName", jobDetail.JobGroupName);
 
                 var stopwatch = new Stopwatch();
@@ -65,7 +65,7 @@ namespace CockQuartz.RemoteServer
             }
             catch (Exception ex)
             {
-                jobExecuteLogs.Message = $"JobName:{jobName},执行出现异常";
+                jobExecuteLogs.Message = $"JobName:{jobName},执行出现异常:{ex.Message}";
                 jobExecuteLogs.IsSuccess = false;
                 jobExecuteLogs.ExceptionMessage = ex.Message;
                 jobExecuteLogs.ExceptionStack = ex.StackTrace;
@@ -81,21 +81,33 @@ namespace CockQuartz.RemoteServer
 
         public async Task JobWasExecuted(IJobExecutionContext context, JobExecutionException jobException, CancellationToken cancellationToken = default(CancellationToken))
         {
-            var jobExecuteLogs = new JobExecuteLogs();
+
+            var jobExecuteLogs =
+                new JobExecuteLogs
+                {
+                    JobDetailId = int.Parse(context.JobDetail.JobDataMap["jobId"].ToString()),
+                    JobName = context.JobDetail.JobDataMap["jobName"].ToString(),
+                    JobGroupName = context.JobDetail.JobDataMap["jobGroupName"].ToString()
+                };
+
             var exceptionEmail = string.Empty;
+
             try
             {
+                if (jobException != null)
+                {
+                    throw jobException;
+                }
+
                 var elapsed = _Stopwatches[context.FireInstanceId].ElapsedMilliseconds;
 
-                jobExecuteLogs.JobDetailId = int.Parse(context.JobDetail.JobDataMap["jobId"].ToString());
-                jobExecuteLogs.JobName = context.JobDetail.JobDataMap["jobName"].ToString();
-                jobExecuteLogs.JobGroupName = context.JobDetail.JobDataMap["jobGroupName"].ToString();
+
                 jobExecuteLogs.Message = $"JobName:{context.JobDetail.JobDataMap["jobName"]},执行结束。执行时间:{elapsed}ms";
                 jobExecuteLogs.IsSuccess = true;
             }
             catch (Exception ex)
             {
-                jobExecuteLogs.Message = $"JobName:{context.JobDetail.JobDataMap["jobName"]},执行出现异常。";
+                jobExecuteLogs.Message = $"JobName:{context.JobDetail.JobDataMap["jobName"]},执行出现异常:{ex.Message}";
                 jobExecuteLogs.IsSuccess = false;
                 jobExecuteLogs.ExceptionMessage = ex.Message;
                 jobExecuteLogs.ExceptionStack = ex.StackTrace;

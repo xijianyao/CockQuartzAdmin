@@ -143,7 +143,7 @@
                                 | <a class="btnDelete" href="">删除Job</a> |
                                 @if (item.IsInSchedule)
                                 {
-                                    <a target="_blank" href="../JobDetail.aspx?jobname=<%= item.JobName%>&jobgroup=<%= item.JobGroup%>"
+                                    <a target="_blank" href="@Url.Action("JobLogList","JobManagement",new {jobId = item.Id})"
                                        class="btnView">查看日志</a>
                                 }
                             </td>

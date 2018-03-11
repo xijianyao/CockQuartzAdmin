@@ -17,14 +17,17 @@ namespace CockQuartz.Application
     {
         private readonly IScheduler _scheduler;
         private readonly IRepository<JobDetail> _jobDetailRepository;
+        private readonly IRepository<JobExecuteLogs> _jobExecuteLogsRepository;
         private readonly CockQuartzDbContext _dbContext;
         private readonly string _quartzInstanceName = ConfigurationManager.AppSettings["QuartzInstanceName"];
 
-        public JobService(IRepository<JobDetail> jobDetailRepository)
+        public JobService(IRepository<JobDetail> jobDetailRepository,
+            IRepository<JobExecuteLogs> jobExecuteLogsRepository)
         {
             _jobDetailRepository = jobDetailRepository;
             _scheduler = SchedulerManager.Instance;
             _dbContext = DbContextFactory.DbContext;
+            _jobExecuteLogsRepository = jobExecuteLogsRepository;
         }
 
         public int CreateJob(JobDetail job)
@@ -62,10 +65,10 @@ namespace CockQuartz.Application
                         jobViewModel.CurrentStatus = GetJobStatusByKey(item.Key);
                         jobViewModel.NextRunTime = item.GetNextFireTimeUtc() == null
                             ? "下次不会触发运行时间"
-                            : item.GetNextFireTimeUtc()?.LocalDateTime.ToString(CultureInfo.InvariantCulture);
+                            : item.GetNextFireTimeUtc()?.LocalDateTime.ToString("yyyy-MM-dd HH:mm:ss.fff");
                         jobViewModel.LastRunTime = item.GetPreviousFireTimeUtc() == null
                             ? "还未运行过"
-                            : item.GetPreviousFireTimeUtc()?.LocalDateTime.ToString(CultureInfo.InvariantCulture);
+                            : item.GetPreviousFireTimeUtc()?.LocalDateTime.ToString("yyyy-MM-dd HH:mm:ss.fff");
 
                         var jobInfo = jobList.FirstOrDefault(x =>
                             x.JobName == jobKey.Name && x.JobGroupName == jobKey.Group);
@@ -111,6 +114,18 @@ namespace CockQuartz.Application
             }
 
             return result;
+        }
+
+        /// <summary>
+        /// 获取执行日子
+        /// </summary>
+        /// <param name="jobId"></param>
+        /// <returns></returns>
+        public List<JobExecuteLogs> GetJobLogList(int jobId)
+        {
+            return _jobExecuteLogsRepository.Query().AsNoTracking()
+                .Where(x => x.JobDetailId == jobId)
+                .OrderBy(x => x.Id).Take(50).ToList();
         }
 
         /// <summary>

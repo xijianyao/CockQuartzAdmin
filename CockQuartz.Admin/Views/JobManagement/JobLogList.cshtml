@@ -1,0 +1,64 @@
+﻿@model List<CockQuartz.Model.JobExecuteLogs>
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>JobLogList</title>
+</head>
+<body>
+    <div>
+        <table>
+            <thead>
+                <tr>
+                    <th>
+                        Job名称
+                    </th>
+                    <th>
+                        是否成功
+                    </th>
+                    <th>
+                        信息
+                    </th>
+                    <th>
+                        失败信息
+                    </th>
+                    <th>
+                        时间
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model != null && Model.Any())
+                {
+                    foreach (var item in Model)
+                    {
+                        <tr>
+                            <th>
+                                @item.JobName
+                            </th>
+                            <th>
+                                @item.IsSuccess
+                            </th>
+                            <th>
+                                @item.Message
+                            </th>
+                            <th>
+                                @item.ExceptionMessage
+                            </th>
+                            <th>
+                                @item.CreationTime.ToString("yyyy-MM-dd HH:mm:ss.fff")
+                            </th>
+                        </tr>
+                    }
+                }
+
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

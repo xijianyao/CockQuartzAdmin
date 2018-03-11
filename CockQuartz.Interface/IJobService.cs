@@ -80,5 +80,7 @@ namespace CockQuartz.Interface
         bool ModifyExceptionEmail(int id, string exceptionEmail);
 
         bool ModifyRequestUrl(int id, string requestUrl);
+
+        List<JobExecuteLogs> GetJobLogList(int jobId);
     }
 }

@@ -9,6 +9,7 @@ namespace CockQuartz.Model
     [Table("JobExecuteLogs")]
     public class JobExecuteLogs : Entity, IHasCreationTime
     {
+        [Index("INDEX_REGNUM")]
         public int JobDetailId { get; set; }
 
         [StringLength(50)]

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.Mvc;
+﻿using System.Web.Mvc;
 using CockQuartz.Interface;
 using CockQuartz.Model;
 
@@ -29,6 +25,13 @@ namespace CockQuartzAdmin.Controllers
             var result = _jobService.GetJobList();
             var instances = _jobService.GetQuartzInstances();
             ViewBag.Instances = instances;
+            return View(result);
+        }
+
+        [HttpGet]
+        public ActionResult JobLogList(int jobId)
+        {
+            var result = _jobService.GetJobLogList(jobId);
             return View(result);
         }
 

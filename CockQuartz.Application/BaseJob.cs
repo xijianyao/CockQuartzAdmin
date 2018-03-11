@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using System.Web;
 using Quartz;
 using ServiceClients;
 
@@ -9,10 +10,17 @@ namespace CockQuartz.Application
     {
         public async Task Execute(IJobExecutionContext context)
         {
-            using (var serviceClient = new ServiceClient())
+            try
             {
+                var serviceClient = new ServiceClient();
                 await serviceClient.RequestAsync(context.JobDetail.JobDataMap["requestUrl"].ToString(), HttpVerb.Get);
             }
+            catch (Exception ex)
+            {
+                
+                throw new JobExecutionException(ex.Message);
+            }
+
         }
     }
 }
