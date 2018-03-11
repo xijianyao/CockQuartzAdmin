@@ -3,6 +3,7 @@ using Quartz.Impl;
 using System.Configuration;
 using Microsoft.Owin.Hosting;
 using Quartz;
+using Quartz.Impl.Matchers;
 
 namespace CockQuartz.RemoteServer
 {
@@ -12,7 +13,7 @@ namespace CockQuartz.RemoteServer
         {
             ISchedulerFactory schedulerFactory = new StdSchedulerFactory();
             var scheduler = schedulerFactory.GetScheduler().Result;
-            //scheduler.ListenerManager.AddJobListener(new JobListener(), GroupMatcher<JobKey>.AnyGroup());
+            scheduler.ListenerManager.AddJobListener(new JobListener(), GroupMatcher<JobKey>.AnyGroup());
             scheduler.Start();
             Console.WriteLine(scheduler.SchedulerInstanceId);
             Console.WriteLine(scheduler.SchedulerName);

@@ -131,8 +131,6 @@ namespace CockQuartz.Application
 
                 JobDataMap map = job.JobDataMap;
                 map.Put("jobId", jobInfo.Id);
-                map.Put("requestUrl", jobInfo.RequestUrl);
-
 
                 CronScheduleBuilder scheduleBuilder = CronScheduleBuilder.CronSchedule(jobInfo.Cron);
                 ITrigger trigger = TriggerBuilder.Create().StartNow()//StartAt(DateTime.SpecifyKind(jobInfo.JobStartTime, DateTimeKind.Local))
