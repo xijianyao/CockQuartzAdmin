@@ -64,5 +64,11 @@ namespace CockQuartz.Interface
         /// <param name="id"></param>
         /// <returns></returns>
         bool StartJob(int id);
+
+        /// <summary>
+        /// 获取运行的实例
+        /// </summary>
+        /// <returns></returns>
+        List<QuartzInstanceOutputDto> GetQuartzInstances();
     }
 }

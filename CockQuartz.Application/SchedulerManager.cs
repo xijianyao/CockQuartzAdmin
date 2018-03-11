@@ -1,4 +1,5 @@
-﻿using System.Collections.Concurrent;
+﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Specialized;
 using System.Configuration;
 using Quartz;
@@ -12,8 +13,7 @@ namespace CockQuartz.Application
         static IScheduler _scheduler;
         public static readonly ConcurrentDictionary<string, IScheduler> ConnectionCache = new ConcurrentDictionary<string, IScheduler>();
 
-        private static readonly string quartzScheduler1_Address = ConfigurationManager.AppSettings["QuartzProxyAddress1"];
-        private static readonly string quartzScheduler2_Address = ConfigurationManager.AppSettings["QuartzProxyAddress2"];
+        private static readonly string quartzScheduler_Address = ConfigurationManager.AppSettings["QuartzProxyAddress"];
 
         public static IScheduler Instance
         {
@@ -35,38 +35,25 @@ namespace CockQuartz.Application
 
         public static IScheduler GetScheduler()
         {
-            if (!ConnectionCache.ContainsKey(quartzScheduler1_Address))
+            try
             {
-                var properties = new NameValueCollection();
-                properties["quartz.scheduler.proxy"] = "true";
-                properties["quartz.scheduler.proxy.address"] = quartzScheduler1_Address;
-                var schedulerFactory = new StdSchedulerFactory(properties);
-                _scheduler = schedulerFactory.GetScheduler().Result;
-                ConnectionCache[quartzScheduler1_Address] = _scheduler;
-                var a = _scheduler.IsStarted;
-                var b = _scheduler.SchedulerInstanceId;
-                var c = _scheduler.SchedulerName;
-                var d = _scheduler.InStandbyMode;
-            }
-            if (!ConnectionCache.ContainsKey(quartzScheduler2_Address))
-            {
-                var properties = new NameValueCollection();
-                properties["quartz.scheduler.proxy"] = "true";
-                properties["quartz.scheduler.proxy.address"] = quartzScheduler2_Address;
-                var schedulerFactory = new StdSchedulerFactory(properties);
-                var _schedulerBackUp = schedulerFactory.GetScheduler().Result;
-                ConnectionCache[quartzScheduler2_Address] = _schedulerBackUp;
-                if (_scheduler == null && _schedulerBackUp != null)
+                if (!ConnectionCache.ContainsKey(quartzScheduler_Address))
                 {
-                    _scheduler = _schedulerBackUp;
+                    var properties = new NameValueCollection();
+                    properties["quartz.scheduler.proxy"] = "true";
+                    properties["quartz.scheduler.proxy.address"] = quartzScheduler_Address;
+                    var schedulerFactory = new StdSchedulerFactory(properties);
+                    _scheduler = schedulerFactory.GetScheduler().Result;
+                    ConnectionCache[quartzScheduler_Address] = _scheduler;
                 }
-                var a = _schedulerBackUp.IsStarted;
-                var b = _schedulerBackUp.SchedulerInstanceId;
-                var c = _schedulerBackUp.SchedulerName;
-                var d = _schedulerBackUp.InStandbyMode;
-            }
 
-            return ConnectionCache[quartzScheduler1_Address];
+                return ConnectionCache[quartzScheduler_Address];
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
+            
         }
 
     }

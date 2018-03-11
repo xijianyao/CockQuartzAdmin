@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Data.Entity;
 using System.Globalization;
 using System.Linq;
@@ -16,11 +17,14 @@ namespace CockQuartz.Application
     {
         private readonly IScheduler _scheduler;
         private readonly IRepository<JobDetail> _jobDetailRepository;
+        private readonly CockQuartzDbContext _dbContext;
+        private readonly string _quartzInstanceName = ConfigurationManager.AppSettings["QuartzInstanceName"];
 
         public JobService(IRepository<JobDetail> jobDetailRepository)
         {
             _jobDetailRepository = jobDetailRepository;
             _scheduler = SchedulerManager.Instance;
+            _dbContext = DbContextFactory.DbContext;
         }
 
         public int CreateJob(JobDetail job)
@@ -237,6 +241,31 @@ withMisfireHandlingInstructionFireAndProceed
             jobInfo.Cron = cron;
             _jobDetailRepository.Update(jobInfo);
             return true;
+        }
+
+        public List<QuartzInstanceOutputDto> GetQuartzInstances()
+        {
+            var instanceInfos = _dbContext.QRTZ_SCHEDULER_STATE.AsNoTracking()
+                .Where(x => x.SCHED_NAME == _quartzInstanceName)
+                .ToList();
+            var result = new List<QuartzInstanceOutputDto>();
+            if (instanceInfos.Any())
+            {
+                foreach (var item in instanceInfos)
+                {
+                    DateTime tmDateUtc = new DateTime(item.LAST_CHECKIN_TIME, DateTimeKind.Utc);
+
+                    DateTime tmDate = DateTime.SpecifyKind(tmDateUtc, DateTimeKind.Local).AddHours(8);
+
+                    result.Add(new QuartzInstanceOutputDto
+                    {
+                        InstanceName = item.INSTANCE_NAME,
+                        LastCheckInTime = tmDate
+                    });
+                }
+            }
+
+            return result;
         }
 
 

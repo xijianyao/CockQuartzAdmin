@@ -27,6 +27,8 @@ namespace CockQuartzAdmin.Controllers
         public ActionResult JobList()
         {
             var result = _jobService.GetJobList();
+            var instances = _jobService.GetQuartzInstances();
+            ViewBag.Instances = instances;
             return View(result);
         }
 

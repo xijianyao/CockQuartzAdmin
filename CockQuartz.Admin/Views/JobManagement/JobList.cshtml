@@ -50,6 +50,14 @@
     <div style="text-align: center">
         <a href="~/CronHelp.htm" target="_blank">Cron表达式帮助页面</a>
     </div>
+    <div style="text-align: center">
+        @foreach (dynamic item in ViewBag.Instances)
+        {
+            <a>实例名：@item.InstanceName</a>
+            <a>上次检查时间：@item.LastCheckInTime</a>
+            <br />
+        }
+    </div>
     <div style="width: 75%; margin: 0 auto; text-align: right; height: 30px; line-height: 20px">
         <input type="button" id="btnAddJob" value="添加Job" style="text-align: right; display: inline-block;
                                                                                                                                                                                                                                                                                                                                                   margin-bottom: 10px;" />
