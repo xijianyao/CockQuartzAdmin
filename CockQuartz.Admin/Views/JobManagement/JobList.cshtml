@@ -58,7 +58,7 @@
             <br />
         }
     </div>
-    <div style="width: 75%; margin: 0 auto; text-align: right; height: 30px; line-height: 20px">
+    <div style="width:100%; margin: 0 auto; text-align: right; height: 30px; line-height: 20px">
         <input type="button" id="btnAddJob" value="添加Job" style="text-align: right; display: inline-block;
                                                                                                                                                                                                                                                                                                                                                   margin-bottom: 10px;" />
         <table class="hovertable" align="center" style="text-align: center;">
@@ -81,6 +81,12 @@
                     </th>
                     <th>
                         下次运行时间
+                    </th>
+                    <th>
+                        ExceptionEmail
+                    </th>
+                    <th>
+                        RequestUrl
                     </th>
                     <th>
                         操作
@@ -111,10 +117,19 @@
                             <td>
                                 @item.NextRunTime
                             </td>
+                            <td>
+                                @item.ExceptionEmail
+                            </td>
+                            <td>
+                                @item.RequestUrl
+                            </td>
                             <td data-jobId='@item.Id'>
+                                <a class="btnEdit" href="">修改计划</a> |
+                                <a class="btnEditExceptionEmail" href="">修改ExceptionEmail</a> |
+                                <a class="btnEditRequestUrl" href="">修改RequestUrl</a> |
                                 @if (!item.IsInSchedule)
                                 {
-                                    <a class="btnRun" href="">计划运行</a>
+                                    <a class="btnRun" href="">加入计划</a>
                                 }
                                 @if (item.CurrentStatus == "Normal")
                                 {
@@ -125,7 +140,7 @@
                                 {
                                     <div>|</div><a href="" class="btnResume">恢复运行</a>
                                 }
-                                | <a class="btnDelete" href="">删除Job</a> | <a class="btnEdit" href="">修改计划</a> |
+                                | <a class="btnDelete" href="">删除Job</a> |
                                 @if (item.IsInSchedule)
                                 {
                                     <a target="_blank" href="../JobDetail.aspx?jobname=<%= item.JobName%>&jobgroup=<%= item.JobGroup%>"
@@ -235,6 +250,39 @@
                     url: '@Url.Action("ModifyJobCron", "JobManagement")',
                     type: 'POST',
                     data: { id: $this.parent().attr("data-jobid"), cron: value },
+                    success: function (data) {
+                        alert(data.message);
+                    }
+                });
+            });
+        });
+
+        $(".btnEditExceptionEmail").on("click", function (e) {
+            e.preventDefault();
+            var $this = $(this);
+            layer.prompt({
+                title: '请输入job错误发送的邮件，多个以分号分隔'
+            }, function (value) {
+                $.ajax({
+                    url: '@Url.Action("ModifyExceptionEmail", "JobManagement")',
+                    type: 'POST',
+                    data: { id: $this.parent().attr("data-jobid"), exceptionEmail: value },
+                    success: function (data) {
+                        alert(data.message);
+                    }
+                });
+            });
+        });
+        $(".btnEditRequestUrl").on("click", function (e) {
+            e.preventDefault();
+            var $this = $(this);
+            layer.prompt({
+                title: '请输入job的RequestUrl'
+            }, function (value) {
+                $.ajax({
+                    url: '@Url.Action("ModifyRequestUrl", "JobManagement")',
+                    type: 'POST',
+                    data: { id: $this.parent().attr("data-jobid"), requestUrl: value },
                     success: function (data) {
                         alert(data.message);
                     }

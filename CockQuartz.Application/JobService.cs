@@ -70,6 +70,8 @@ namespace CockQuartz.Application
                         var jobInfo = jobList.FirstOrDefault(x =>
                             x.JobName == jobKey.Name && x.JobGroupName == jobKey.Group);
                         jobViewModel.Cron = jobInfo.Cron;
+                        jobViewModel.RequestUrl = jobInfo.RequestUrl;
+                        jobViewModel.ExceptionEmail = jobInfo.ExceptionEmail;
                         jobViewModel.Id = jobInfo.Id;
                         jobViewModel.IsInSchedule = true;
                         result.Add(jobViewModel);
@@ -102,6 +104,8 @@ namespace CockQuartz.Application
                     jobViewModel.Cron = item.Cron;
                     jobViewModel.Id = item.Id;
                     jobViewModel.IsInSchedule = false;
+                    jobViewModel.RequestUrl = item.RequestUrl;
+                    jobViewModel.ExceptionEmail = item.ExceptionEmail;
                     result.Add(jobViewModel);
                 }
             }
@@ -214,8 +218,14 @@ withMisfireHandlingInstructionFireAndProceed
         public bool StartJob(int id)
         {
             var jobInfo = _jobDetailRepository.FirstOrDefault(x => x.Id == id);
-            var jobKey = CreateJobKey(jobInfo.JobName, jobInfo.JobGroupName);
-            _scheduler.TriggerJob(jobKey);
+
+            CronScheduleBuilder scheduleBuilder = CronScheduleBuilder.CronSchedule(jobInfo.Cron);
+            var triggerKey = CreateTriggerKey(jobInfo.TriggerName, jobInfo.TriggerGroupName);
+            ITrigger trigger = TriggerBuilder.Create().StartNow()
+                .WithIdentity(jobInfo.TriggerName, jobInfo.TriggerGroupName)
+                .WithSchedule(scheduleBuilder.WithMisfireHandlingInstructionFireAndProceed())
+                .Build();
+            _scheduler.RescheduleJob(triggerKey, trigger);
             return true;
         }
 
@@ -229,14 +239,35 @@ withMisfireHandlingInstructionFireAndProceed
         {
             var jobInfo = _jobDetailRepository.FirstOrDefault(x => x.Id == id);
 
-            CronScheduleBuilder scheduleBuilder = CronScheduleBuilder.CronSchedule(jobInfo.Cron);
-            var triggerKey = CreateTriggerKey(jobInfo.TriggerName, jobInfo.TriggerGroupName);
-            ITrigger trigger = TriggerBuilder.Create().StartNow()
+            JobKey jobKey = CreateJobKey(jobInfo.JobName, jobInfo.JobGroupName);
+            if (_scheduler.CheckExists(jobKey).Result)
+            {
+                CronScheduleBuilder scheduleBuilder = CronScheduleBuilder.CronSchedule(cron);
+                var triggerKey = CreateTriggerKey(jobInfo.TriggerName, jobInfo.TriggerGroupName);
+                ITrigger trigger = TriggerBuilder.Create().StartNow()
                     .WithIdentity(jobInfo.TriggerName, jobInfo.TriggerGroupName)
                     .WithSchedule(scheduleBuilder.WithMisfireHandlingInstructionDoNothing())
                     .Build();
-            _scheduler.RescheduleJob(triggerKey, trigger);
+                _scheduler.RescheduleJob(triggerKey, trigger);
+            }
+
             jobInfo.Cron = cron;
+            _jobDetailRepository.Update(jobInfo);
+            return true;
+        }
+
+        public bool ModifyExceptionEmail(int id, string exceptionEmail)
+        {
+            var jobInfo = _jobDetailRepository.FirstOrDefault(x => x.Id == id);
+            jobInfo.ExceptionEmail = exceptionEmail;
+            _jobDetailRepository.Update(jobInfo);
+            return true;
+        }
+
+        public bool ModifyRequestUrl(int id, string requestUrl)
+        {
+            var jobInfo = _jobDetailRepository.FirstOrDefault(x => x.Id == id);
+            jobInfo.RequestUrl = requestUrl;
             _jobDetailRepository.Update(jobInfo);
             return true;
         }

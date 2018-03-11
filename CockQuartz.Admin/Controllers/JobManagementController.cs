@@ -85,5 +85,19 @@ namespace CockQuartzAdmin.Controllers
             _jobService.ModifyJobCron(id, cron);
             return Json(new { success = true, message = "成功" });
         }
+
+        [HttpPost]
+        public JsonResult ModifyExceptionEmail(int id, string exceptionEmail)
+        {
+            _jobService.ModifyExceptionEmail(id, exceptionEmail);
+            return Json(new { success = true, message = "成功" });
+        }
+
+        [HttpPost]
+        public JsonResult ModifyRequestUrl(int id, string requestUrl)
+        {
+            _jobService.ModifyRequestUrl(id, requestUrl);
+            return Json(new { success = true, message = "成功" });
+        }
     }
 }

@@ -16,6 +16,7 @@ namespace CockQuartz.Model
         }
 
         public virtual DbSet<JobDetail> JobDetail { get; set; }
+        public virtual DbSet<JobExecuteLogs> JobExecuteLogs { get; set; }
         public virtual DbSet<QRTZ_BLOB_TRIGGERS> QRTZ_BLOB_TRIGGERS { get; set; }
         public virtual DbSet<QRTZ_CALENDARS> QRTZ_CALENDARS { get; set; }
         public virtual DbSet<QRTZ_CRON_TRIGGERS> QRTZ_CRON_TRIGGERS { get; set; }
@@ -31,6 +32,10 @@ namespace CockQuartz.Model
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             modelBuilder.Entity<JobDetail>()
+                .HasKey(e => e.Id)
+                .Property(e => e.Id).HasDatabaseGeneratedOption(DatabaseGeneratedOption.Identity);
+
+            modelBuilder.Entity<JobExecuteLogs>()
                 .HasKey(e => e.Id)
                 .Property(e => e.Id).HasDatabaseGeneratedOption(DatabaseGeneratedOption.Identity);
 

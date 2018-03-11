@@ -70,5 +70,15 @@ namespace CockQuartz.Interface
         /// </summary>
         /// <returns></returns>
         List<QuartzInstanceOutputDto> GetQuartzInstances();
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="exceptionEmail"></param>
+        /// <returns></returns>
+        bool ModifyExceptionEmail(int id, string exceptionEmail);
+
+        bool ModifyRequestUrl(int id, string requestUrl);
     }
 }
