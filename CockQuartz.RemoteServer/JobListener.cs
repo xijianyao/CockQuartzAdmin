@@ -30,6 +30,8 @@ namespace CockQuartz.RemoteServer
             var jobExecuteLogs = new JobExecuteLogs();
             var exceptionEmail = string.Empty;
             var jobName = string.Empty;
+            var a = context.FireInstanceId;
+            var b = context.JobInstance;
             try
             {
                 var jobId = int.Parse(context.JobDetail.JobDataMap["jobId"].ToString());
