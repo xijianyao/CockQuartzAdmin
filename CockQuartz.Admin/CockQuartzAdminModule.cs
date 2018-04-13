@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Web;
-using Castle.MicroKernel.Registration;
 using CockQuartz.Application;
 using CockQuartzAdmin.Infrastructure;
+using CockQuartzAdmin.JobHandler;
 using eHi.Library.Integration.Admin;
 using eHi.Library.Integration.Common.Configuration;
 using eHi.Library.Interface;
@@ -13,6 +10,9 @@ using eHi.Library.Service;
 using FeI.Dependency;
 using FeI.Domain.Uow;
 using FeI.Modules;
+using Quartz;
+using Quartz.Impl;
+using Quartz.Impl.Matchers;
 using Module = FeI.Modules.Module;
 
 namespace CockQuartzAdmin
@@ -32,6 +32,18 @@ namespace CockQuartzAdmin
         {
             IocManager.RegisterTypeIfNot<IDbConnectionStringResolver, DefaultDbConnectionStringResolver>();
             IocManager.RegisterAssemblyByConvention(typeof(CockQuartzAdminModule).GetTypeInfo().Assembly);
+            ConfigQuartz();
+        }
+
+        private void ConfigQuartz()
+        {
+
+            ISchedulerFactory schedulerFactory = new StdSchedulerFactory();
+            var scheduler = schedulerFactory.GetScheduler().Result;
+            scheduler.ListenerManager.AddJobListener(new JobListener(), GroupMatcher<JobKey>.AnyGroup());
+            scheduler.Start();
+            Console.WriteLine(scheduler.SchedulerInstanceId);
+            Console.WriteLine(scheduler.SchedulerName);
         }
     }
 }

@@ -4,6 +4,10 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
+using CockQuartzAdmin.JobHandler;
+using Quartz;
+using Quartz.Impl;
+using Quartz.Impl.Matchers;
 
 namespace CockQuartzAdmin
 {
@@ -14,5 +18,6 @@ namespace CockQuartzAdmin
             AreaRegistration.RegisterAllAreas();
             RouteConfig.RegisterRoutes(RouteTable.Routes);
         }
+
     }
 }
