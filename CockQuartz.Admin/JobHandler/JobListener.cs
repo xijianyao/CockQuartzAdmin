@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Net;
+using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
 using CockQuartz.Application;
@@ -70,6 +72,17 @@ namespace CockQuartzAdmin.JobHandler
                 jobExecuteLogs.ExceptionMessage = ex.Message;
                 jobExecuteLogs.ExceptionStack = ex.StackTrace;
             }
+
+            var alAllLocalIp = string.Empty;
+            string strHostName = Dns.GetHostName(); //得到本机的主机名
+            IPHostEntry ipEntry = Dns.GetHostEntry(strHostName); //取得本机IP
+            for (int i = 0; i < ipEntry.AddressList.Length; i++)
+            {
+                if (ipEntry.AddressList[i].AddressFamily == AddressFamily.InterNetwork)
+                    alAllLocalIp += ipEntry.AddressList[i].ToString() + ";";
+            }
+            jobExecuteLogs.ExecuteInstanceIp = alAllLocalIp;
+            jobExecuteLogs.ExecuteInstanceName = context.FireInstanceId;
 
             _dbContext.JobExecuteLogs.Add(jobExecuteLogs);
             if (!jobExecuteLogs.IsSuccess && !string.IsNullOrWhiteSpace(exceptionEmail))

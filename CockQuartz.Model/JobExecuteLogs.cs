@@ -21,6 +21,12 @@ namespace CockQuartz.Model
         public bool IsSuccess { get; set; }
 
         [StringLength(500)]
+        public string ExecuteInstanceName { get; set; }
+
+        [StringLength(200)]
+        public string ExecuteInstanceIp { get; set; }
+
+        [StringLength(500)]
         public string Message { get; set; }
 
         [StringLength(500)]
