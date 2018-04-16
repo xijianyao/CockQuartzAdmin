@@ -60,7 +60,7 @@ namespace CockQuartzAdmin.JobHandler
                 jobExecuteLogs.JobDetailId = jobDetail.Id;
                 jobExecuteLogs.JobName = jobDetail.JobName;
                 jobExecuteLogs.JobGroupName = jobDetail.JobGroupName;
-                jobExecuteLogs.Message = $"JobName:{jobDetail.JobName},开始执行...";
+                jobExecuteLogs.Message = $"JobName:{jobDetail.JobName},发送调度";
                 jobExecuteLogs.IsSuccess = true;
 
                 exceptionEmail = jobDetail.ExceptionEmail;
@@ -68,22 +68,14 @@ namespace CockQuartzAdmin.JobHandler
             catch (Exception ex)
             {
                 jobExecuteLogs.JobDetailId = jobId;
-                jobExecuteLogs.Message = $"执行出现异常:{ex.Message}";
+                jobExecuteLogs.Message = $"发送调度出现异常:{ex.Message}";
                 jobExecuteLogs.IsSuccess = false;
                 jobExecuteLogs.ExceptionMessage = ex.Message;
                 jobExecuteLogs.ExceptionStack = ex.StackTrace;
             }
 
-            var alAllLocalIp = string.Empty;
-            string strHostName = Dns.GetHostName(); //得到本机的主机名
-            IPHostEntry ipEntry = Dns.GetHostEntry(strHostName); //取得本机IP
-            for (int i = 0; i < ipEntry.AddressList.Length; i++)
-            {
-                if (ipEntry.AddressList[i].AddressFamily == AddressFamily.InterNetwork)
-                    alAllLocalIp += ipEntry.AddressList[i].ToString() + ";";
-            }
-            jobExecuteLogs.ExecuteInstanceIp = alAllLocalIp;
-            jobExecuteLogs.ExecuteInstanceName = context.FireInstanceId;
+            jobExecuteLogs.ExecuteInstanceIp = GetIp();
+            jobExecuteLogs.ExecuteInstanceName = context.Scheduler.SchedulerInstanceId;
 
             _dbContext.JobExecuteLogs.Add(jobExecuteLogs);
             if (!jobExecuteLogs.IsSuccess && !string.IsNullOrWhiteSpace(exceptionEmail))
@@ -116,16 +108,19 @@ namespace CockQuartzAdmin.JobHandler
                 var elapsed = _Stopwatches[context.FireInstanceId].ElapsedMilliseconds;
 
 
-                jobExecuteLogs.Message = $"JobName:{context.JobDetail.JobDataMap["jobName"]},执行结束。执行时间:{elapsed}ms";
+                jobExecuteLogs.Message = $"JobName:{context.JobDetail.JobDataMap["jobName"]},调度结束。调度响应时间:{elapsed}ms";
                 jobExecuteLogs.IsSuccess = true;
             }
             catch (Exception ex)
             {
-                jobExecuteLogs.Message = $"JobName:{context.JobDetail.JobDataMap["jobName"]},执行出现异常:{ex.Message}";
+                jobExecuteLogs.Message = $"JobName:{context.JobDetail.JobDataMap["jobName"]},调度出现异常:{ex.Message}";
                 jobExecuteLogs.IsSuccess = false;
                 jobExecuteLogs.ExceptionMessage = ex.Message;
                 jobExecuteLogs.ExceptionStack = ex.StackTrace;
             }
+
+            jobExecuteLogs.ExecuteInstanceIp = GetIp();
+            jobExecuteLogs.ExecuteInstanceName = context.Scheduler.SchedulerInstanceId;
 
             _dbContext.JobExecuteLogs.Add(jobExecuteLogs);
             if (!jobExecuteLogs.IsSuccess && !string.IsNullOrWhiteSpace(exceptionEmail))
@@ -138,6 +133,20 @@ namespace CockQuartzAdmin.JobHandler
         private void SendExceptionEmail(string email, string jobName, string exceptionMessage, string exceptionStack)
         {
 
+        }
+
+        private string GetIp()
+        {
+            var alAllLocalIp = string.Empty;
+            string strHostName = Dns.GetHostName(); //得到本机的主机名
+            IPHostEntry ipEntry = Dns.GetHostEntry(strHostName); //取得本机IP
+            for (int i = 0; i < ipEntry.AddressList.Length; i++)
+            {
+                if (ipEntry.AddressList[i].AddressFamily == AddressFamily.InterNetwork)
+                    alAllLocalIp += ipEntry.AddressList[i] + ";";
+            }
+
+            return alAllLocalIp;
         }
     }
 }

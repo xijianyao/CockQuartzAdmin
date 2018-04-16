@@ -42,8 +42,6 @@ namespace CockQuartzAdmin
             var scheduler = schedulerFactory.GetScheduler().Result;
             scheduler.ListenerManager.AddJobListener(new JobListener(), GroupMatcher<JobKey>.AnyGroup());
             scheduler.Start();
-            Console.WriteLine(scheduler.SchedulerInstanceId);
-            Console.WriteLine(scheduler.SchedulerName);
         }
     }
 }
