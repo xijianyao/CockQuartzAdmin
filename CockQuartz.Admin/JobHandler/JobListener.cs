@@ -32,9 +32,9 @@ namespace CockQuartzAdmin.JobHandler
             var jobExecuteLogs = new JobExecuteLogs();
             var exceptionEmail = string.Empty;
             var jobName = string.Empty;
+            var jobId = int.Parse(context.JobDetail.JobDataMap["jobId"].ToString());
             try
-            {
-                var jobId = int.Parse(context.JobDetail.JobDataMap["jobId"].ToString());
+            {                
                 var jobDetail = _dbContext.JobDetail.AsNoTracking()
                     .FirstOrDefault(x => x.Id == jobId);
 
@@ -67,7 +67,8 @@ namespace CockQuartzAdmin.JobHandler
             }
             catch (Exception ex)
             {
-                jobExecuteLogs.Message = $"JobName:{jobName},执行出现异常:{ex.Message}";
+                jobExecuteLogs.JobDetailId = jobId;
+                jobExecuteLogs.Message = $"执行出现异常:{ex.Message}";
                 jobExecuteLogs.IsSuccess = false;
                 jobExecuteLogs.ExceptionMessage = ex.Message;
                 jobExecuteLogs.ExceptionStack = ex.StackTrace;
