@@ -301,10 +301,13 @@ withMisfireHandlingInstructionFireAndProceed
 
                     DateTime tmDate = DateTime.SpecifyKind(tmDateUtc, DateTimeKind.Local).AddHours(8);
 
+                    var heartBeat = DateDiff(DateTime.Now, tmDate);
+
                     result.Add(new QuartzInstanceOutputDto
                     {
                         InstanceName = item.INSTANCE_NAME,
-                        LastCheckInTime = tmDate
+                        LastCheckInTime = tmDate,
+                        HeartBeat = heartBeat
                     });
                 }
             }
@@ -323,15 +326,45 @@ withMisfireHandlingInstructionFireAndProceed
             return new TriggerKey(triggerName, triggerGroupName);
         }
 
-        private JobDataMap CreateJobDataMap<T>(string propertyName, T propertyValue)
-        {
-            return new JobDataMap(new Dictionary<string, T>() { { propertyName, propertyValue } });
-        }
-
         private string GetJobStatusByKey(TriggerKey triggerKey)
         {
             var status = _scheduler.GetTriggerState(triggerKey).Result;
             return status.ToString();
+        }
+
+        private string DateDiff(DateTime dateTime1, DateTime dateTime2)
+        {
+            TimeSpan ts1 = new TimeSpan(dateTime1.Ticks);
+            TimeSpan ts2 = new
+                TimeSpan(dateTime2.Ticks);
+            TimeSpan ts = ts1.Subtract(ts2).Duration();
+
+            if (ts.Days > 0)
+            {
+                return ts.Days + "天前";
+            }
+
+            if (ts.Hours > 0)
+            {
+                return ts.Hours + "小时前";
+            }
+
+            if (ts.Minutes > 0)
+            {
+                return ts.Minutes + "分钟前";
+            }
+
+            if (ts.Seconds > 0)
+            {
+                return ts.Seconds + "秒前";
+            }
+
+            if (ts.Milliseconds > 0)
+            {
+                return "1秒内";
+            }
+
+            return string.Empty;
         }
     }
 }

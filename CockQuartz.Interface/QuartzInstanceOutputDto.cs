@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CockQuartz.Interface
 {
@@ -11,5 +7,7 @@ namespace CockQuartz.Interface
         public string InstanceName { get; set; }
 
         public DateTime LastCheckInTime { get; set; }
+
+        public string HeartBeat { get; set; }
     }
 }

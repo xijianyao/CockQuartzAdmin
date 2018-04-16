@@ -36,7 +36,7 @@ namespace CockQuartz.Application
         public static IScheduler GetScheduler()
         {
             try
-            {
+            {                
                 //if (!ConnectionCache.ContainsKey(quartzScheduler_Address))
                 //{
                 //    var properties = new NameValueCollection();
