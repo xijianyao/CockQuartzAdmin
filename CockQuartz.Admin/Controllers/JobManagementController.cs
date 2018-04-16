@@ -13,12 +13,6 @@ namespace CockQuartzAdmin.Controllers
             _jobService = jobService;
         }
 
-        // GET: JobManagement
-        public ActionResult Index()
-        {
-            return View();
-        }
-
         [HttpGet]
         public ActionResult JobList()
         {
