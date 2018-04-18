@@ -1,0 +1,131 @@
+﻿@using eHi.Common.Dto.Paged;
+@model PagedResultDto<CockQuartz.Interface.JobDetailOutputDto>
+@{
+    ViewBag.Title = "_JobList";
+    Layout = null;
+    var pageCount = (int)Math.Ceiling(Model.TotalCount / 10.0);
+    pageCount = pageCount > 1 ? pageCount : 1;
+}
+<table class="table table-bordered table-bordered-hover text-center">
+    <thead>
+        <tr>
+            <th>
+                Job名称
+            </th>
+            <th>
+                Job分组
+            </th>
+            <th>
+                当前状态
+            </th>
+            <th>
+                Cron表达式
+            </th>
+            <th>
+                上次运行时间
+            </th>
+            <th>
+                下次运行时间
+            </th>
+            <th>
+                ExceptionEmail
+            </th>
+            <th>
+                RequestUrl
+            </th>
+            <th>
+                操作
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model != null && Model.Items.Any())
+        {
+            foreach (var item in Model.Items)
+            {
+                <tr>
+                    <td>
+                        @item.JobName
+                    </td>
+                    <td>
+                        @item.JobGroupName
+                    </td>
+                    <td class="status">
+                        @item.CurrentStatus
+                    </td>
+                    <td>
+                        @item.Cron
+                    </td>
+                    <td>
+                        @item.LastRunTime
+                    </td>
+                    <td>
+                        @item.NextRunTime
+                    </td>
+                    <td>
+                        @item.ExceptionEmail
+                    </td>
+                    <td>
+                        @item.RequestUrl
+                    </td>
+                    <td data-jobId='@item.Id'>
+                       
+                        <div class="dropdown">
+                            <button class="btn btn-hollow btn-hollow-info dropdown-toggle" type="button" aria-expanded="false">
+                                更多
+                                <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <a class="btnEdit" href="">修改计划</a> 
+                                </li>
+                                <li>
+                                    <a class="btnEditExceptionEmail" href="">修改ExceptionEmail</a>
+                                </li>
+                                <li>
+                                    <a class="btnEditRequestUrl" href="">修改RequestUrl</a>
+                                </li>
+                                @if (!item.IsInSchedule)
+                                {
+                                    <li>
+                                        <a class="btnRun" href="">加入计划</a>
+                                    </li>
+                                }
+                                @if (item.CurrentStatus == "Normal")
+                                {
+                                    <li>
+                                        <a href="" class="btnStart">立即执行</a>
+                                    </li>
+                                    <li>
+                                        <a href="" class="btnStop">停止</a>
+                                    </li>
+                                }
+                                @if (item.CurrentStatus == "Paused")
+                                {
+                                    <li>
+                                        <a href="" class="btnResume">恢复运行</a>
+                                    </li>
+                                }
+                                <li>
+                                    <a class="btnDelete" href="">删除Job</a>
+                                </li>
+                                @if (item.IsInSchedule)
+                                {
+                                    <li>
+                                        <a target="_blank" href="@Url.Action("JobLogList","JobManagement",new {jobId = item.Id})"
+                                           class="btnView">查看日志</a>
+                                    </li>
+                                }
+                            </ul>
+                        </div>
+                        
+                    </td>
+                </tr>
+            }
+
+        }
+
+    </tbody>
+</table>
+<input type="hidden" id="pageCount" value="@pageCount"/>
+@Html.Partial("~/Views/Shared/_Page.cshtml")

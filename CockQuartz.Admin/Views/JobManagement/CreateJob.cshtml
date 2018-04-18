@@ -2,51 +2,74 @@
 @{
     Layout = null;
 }
-
-<!DOCTYPE html>
-
-<html>
-<head>
-    <meta name="viewport" content="width=device-width" />
-    <title>CreateJob</title>
-</head>
-<body>
-<form id="form1" action="@Url.Action("CreateJob","JobManagement")" method="post">
-    <div>
-        <p style="margin-left: 100px">
-            <br />
-            JobName：&nbsp;&nbsp;
-            <input type="text" id="JobName" name="JobName" Width="214px" />
-        </p>
-        <p style="margin-left: 100px">
-            <br />
-            JobGroupName：&nbsp;&nbsp;
-            <input type="text" id="JobGroupName" name="JobGroupName" Width="214px" />
-        </p>
-        <p style="margin-left: 100px">
-            <br />
-            TriggerName：
-            <input type="text" id="TriggerName" name="TriggerName" Width="214px" />
-        </p>
-        <p style="margin-left: 100px">
-            <br />
-            TriggerGroupName：
-            <input type="text" id="TriggerGroupName" name="TriggerGroupName" Width="214px" />
-        </p>
-        <p style="margin-left: 100px">
-            <br />
-            RequestUrl：
-            <input type="text" id="RequestUrl" name="RequestUrl" Width="214px" />
-        </p>
-        <p style="margin-left: 100px">
-            <br />
-            Cron：
-            <input type="text" id="Cron" name="Cron" Width="214px" />
-        </p>
-    </div>
-    <div>
-        <input type="submit" name="Create" Width="77px" style="margin-left: 400px"/>
-    </div>
-</form>
-</body>
-</html>
+<div class="modal-header">
+    <div class="modal-title">创建Job</div>
+</div>
+<div class="filter-box">
+    <form id="CreateJobform" class="form-horizontal">
+        <div class="col-xs-6 col-md-4 col-sm-6 col-lg-6">
+            <div class="form-group">
+                <label class="col-xs-5 control-label">JobName：</label>
+                <div class="col-xs-7">
+                    <input class="form-control" placeholder="请填写JobName" id="JobName" name="JobName" type="text" />
+                </div>
+            </div>
+        </div>
+        <div class="col-xs-6 col-md-4 col-sm-6 col-lg-6">
+            <div class="form-group">
+                <label class="col-xs-5 control-label">JobGroupName：</label>
+                <div class="col-xs-7">
+                    <input class="form-control" id="JobGroupName" readonly="readonly" name="JobGroupName" type="text" value="@ViewBag.GroupName" />
+                </div>
+            </div>
+        </div>
+        <div class="col-xs-6 col-md-4 col-sm-6 col-lg-6" style="display:none">
+            <div class="form-group">
+                <label class="col-xs-5 control-label">TriggerName：</label>
+                <div class="col-xs-7">
+                    <input class="form-control" id="TriggerName" name="TriggerName" readonly="readonly" type="text" value="@(ViewBag.GroupName+"TriggerName")" />
+                </div>
+            </div>
+        </div>
+        <div class="col-xs-6 col-md-4 col-sm-6 col-lg-6" style="display:none">
+            <div class="form-group">
+                <label class="col-xs-5 control-label">TriggerGroupName：</label>
+                <div class="col-xs-7">
+                    <input class="form-control" id="TriggerGroupName" name="TriggerGroupName" readonly="readonly" type="text" value="@(ViewBag.GroupName+"TriggerGroupName")" />
+                </div>
+            </div>
+        </div>
+        <div class="col-xs-6 col-md-4 col-sm-6 col-lg-6">
+            <div class="form-group">
+                <label class="col-xs-5 control-label">RequestUrl：</label>
+                <div class="col-xs-7">
+                    <input class="form-control" id="RequestUrl" name="RequestUrl" placeholder="请填写RequestUrl" type="text" />
+                </div>
+            </div>
+        </div>
+        <div class="col-xs-6 col-md-4 col-sm-6 col-lg-6">
+            <div class="form-group">
+                <label class="col-xs-5 control-label">Cron：</label>
+                <div class="col-xs-7">
+                    <input class="form-control" id="Cron" name="Cron" placeholder="请填写Cron表达式" type="text" />
+                </div>
+            </div>
+        </div>
+        <div class="col-xs-6 col-md-4 col-sm-6 col-lg-6">
+            <div class="form-group">
+                <label class="col-xs-5 control-label">ExceptionEmail：</label>
+                <div class="col-xs-7">
+                    <input class="form-control" id="ExceptionEmail" name="ExceptionEmail" placeholder="请填写ExceptionEmail" type="text" />
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+<div class="modal-footer">
+    <button type="button" class="j-modal-cancel btn" id="modalCanel">
+        <span>取消</span>
+    </button>
+    <button type="button" class="j-modal-ok btn btn-primary" id="modalBtnAddJob">
+        <span>确定</span>
+    </button>
+</div>

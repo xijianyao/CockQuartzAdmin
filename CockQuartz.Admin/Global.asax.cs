@@ -13,8 +13,12 @@ namespace CockQuartzAdmin
 {
     public class MvcApplication : System.Web.HttpApplication
     {
+        public static string Version { get; private set; }
         protected void Application_Start()
         {
+        
+            Version = Guid.NewGuid().ToString("N");
+          
             AreaRegistration.RegisterAllAreas();
             RouteConfig.RegisterRoutes(RouteTable.Routes);
         }
