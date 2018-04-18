@@ -168,7 +168,10 @@ $(function () {
     });
 
     $("#modalBtnAddJob").on("click", function () {
+
         var param = $("#CreateJobform").serializeJson();
+        param.TriggerName = param.JobName + param.TriggerName;
+        param.TriggerGroupName = param.JobName + param.TriggerGroupName;
         Requests.AsnyPost(url.btnAddJob, JSON.stringify(param), function (data) {
             if (data) {
                 alert("添加成功");
