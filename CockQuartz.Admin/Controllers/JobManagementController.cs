@@ -14,12 +14,20 @@ namespace CockQuartzAdmin.Controllers
         }
 
         [HttpGet]
-        public ActionResult JobList()
+        public ActionResult JobList(string groupName = "自驾官网")
         {
-            var result = _jobService.GetJobList();
+            var result = _jobService.GetJobList(1, groupName);
             var instances = _jobService.GetQuartzInstances();
             ViewBag.Instances = instances;
+            ViewBag.GroupName = groupName;
             return View(result);
+        }
+        [HttpPost]
+        public ViewResult JobList(int pageIndex = 1, string groupName = "")
+        {
+            var result = _jobService.GetJobList(pageIndex, groupName);
+            ViewBag.GroupName = groupName;
+            return View("Partial/_JobList",result);
         }
 
         [HttpGet]
@@ -27,11 +35,6 @@ namespace CockQuartzAdmin.Controllers
         {
             var result = _jobService.GetJobLogList(jobId);
             return View(result);
-        }
-
-        public ActionResult CreateJob()
-        {
-            return View();
         }
 
         [HttpPost]

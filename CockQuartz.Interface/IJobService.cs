@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using CockQuartz.Model;
+using eHi.Common.Dto.Paged;
 
 namespace CockQuartz.Interface
 {
@@ -20,7 +21,7 @@ namespace CockQuartz.Interface
         /// /获取任务列表
         /// </summary>
         /// <returns></returns>
-        List<JobDetailOutputDto> GetJobList();
+        PagedResultDto<JobDetailOutputDto> GetJobList(int pageIndex , string groupName="");
 
         /// <summary>
         /// 运行任务

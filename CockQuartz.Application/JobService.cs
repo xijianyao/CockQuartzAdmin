@@ -10,6 +10,7 @@ using FeI.Application;
 using FeI.Domain.Repositories;
 using Quartz;
 using Quartz.Impl.Matchers;
+using eHi.Common.Dto.Paged;
 
 namespace CockQuartz.Application
 {
@@ -40,7 +41,7 @@ namespace CockQuartz.Application
         /// /获取任务列表
         /// </summary>
         /// <returns></returns>
-        public List<JobDetailOutputDto> GetJobList()
+        public PagedResultDto<JobDetailOutputDto> GetJobList(int pageIndex, string groupNames = "")
         {
             if (_scheduler == null)
             {
@@ -49,6 +50,12 @@ namespace CockQuartz.Application
 
             var jobList = _jobDetailRepository.Query().AsNoTracking()
                 .Where(x => !x.IsDeleted).ToList();
+            if (!string.IsNullOrEmpty(groupNames))
+            {
+                jobList = jobList.Where(x => x.JobGroupName == groupNames).ToList();
+            }
+            var totalCount = jobList.Count;
+
             var result = new List<JobDetailOutputDto>();
             foreach (var groupName in _scheduler.GetJobGroupNames().Result)
             {
@@ -57,21 +64,27 @@ namespace CockQuartz.Application
                     var triggers = _scheduler.GetTriggersOfJob(jobKey).Result.ToList();
                     foreach (var item in triggers)
                     {
-                        var jobViewModel = new JobDetailOutputDto();
-                        jobViewModel.JobName = jobKey.Name;
-                        jobViewModel.JobGroupName = jobKey.Group;
-                        jobViewModel.TriggerGroupName = item.Key.Group;
-                        jobViewModel.TriggerName = item.Key.Name;
-                        jobViewModel.CurrentStatus = GetJobStatusByKey(item.Key);
-                        jobViewModel.NextRunTime = item.GetNextFireTimeUtc() == null
+                        var jobViewModel = new JobDetailOutputDto
+                        {
+                            JobName = jobKey.Name,
+                            JobGroupName = jobKey.Group,
+                            TriggerGroupName = item.Key.Group,
+                            TriggerName = item.Key.Name,
+                            CurrentStatus = GetJobStatusByKey(item.Key),
+                            NextRunTime = item.GetNextFireTimeUtc() == null
                             ? "下次不会触发运行时间"
-                            : item.GetNextFireTimeUtc()?.LocalDateTime.ToString("yyyy-MM-dd HH:mm:ss.fff");
-                        jobViewModel.LastRunTime = item.GetPreviousFireTimeUtc() == null
+                            : item.GetNextFireTimeUtc()?.LocalDateTime.ToString("yyyy-MM-dd HH:mm:ss.fff"),
+                            LastRunTime = item.GetPreviousFireTimeUtc() == null
                             ? "还未运行过"
-                            : item.GetPreviousFireTimeUtc()?.LocalDateTime.ToString("yyyy-MM-dd HH:mm:ss.fff");
+                            : item.GetPreviousFireTimeUtc()?.LocalDateTime.ToString("yyyy-MM-dd HH:mm:ss.fff")
+                        };
 
                         var jobInfo = jobList.FirstOrDefault(x =>
                             x.JobName == jobKey.Name && x.JobGroupName == jobKey.Group);
+                        if (jobInfo == null)
+                        {
+                            continue;
+                        }//
                         jobViewModel.Cron = jobInfo.Cron;
                         jobViewModel.RequestUrl = jobInfo.RequestUrl;
                         jobViewModel.ExceptionEmail = jobInfo.ExceptionEmail;
@@ -113,7 +126,10 @@ namespace CockQuartz.Application
                 }
             }
 
-            return result;
+
+            result = result.Skip(10 * (pageIndex - 1)).Take(pageIndex * 10).ToList();//分页默认每页大小为10
+            return new PagedResultDto<JobDetailOutputDto>(totalCount, result);
+            //return result;
         }
 
         /// <summary>
@@ -196,7 +212,6 @@ withMisfireHandlingInstructionFireAndProceed
             _scheduler.PauseTrigger(triggerKey);
             _scheduler.UnscheduleJob(triggerKey);
             _scheduler.DeleteJob(jobKey);
-
             _jobDetailRepository.Delete(jobInfo);
             return true;
         }
