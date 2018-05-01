@@ -341,6 +341,7 @@
     <Compile Include="CockQuartzAdminModule.cs" />
     <Compile Include="Common\CockQuartzConst.cs" />
     <Compile Include="Controllers\JobManagementController.cs" />
+    <Compile Include="Controllers\TestController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>

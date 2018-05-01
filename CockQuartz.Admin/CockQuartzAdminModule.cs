@@ -1,5 +1,7 @@
 ﻿using System.Reflection;
 using CockQuartz.Application;
+using eHi.Common.Enum;
+using eHi.Library.Extensions;
 using eHi.Library.Integration.Admin;
 using eHi.Library.Integration.Common.Configuration;
 using eHi.Library.Interface;
@@ -25,6 +27,9 @@ namespace CockQuartzAdmin
         {
             IocManager.RegisterTypeIfNot<IDbConnectionStringResolver, DefaultDbConnectionStringResolver>();
             IocManager.RegisterAssemblyByConvention(typeof(CockQuartzAdminModule).GetTypeInfo().Assembly);
+            Configuration
+                .SetPlatform(Platform.Test);
         }
+
     }
 }

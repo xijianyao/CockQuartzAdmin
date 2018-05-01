@@ -20,14 +20,12 @@ namespace CockQuartz.Application
         /// <param name="developerMail">开发者邮件</param>
         /// <param name="exceptionOnlyToMe">该Job报错是否只发送给我，True只发送给我，False web.config中配置的ApiJobExceptionMailTo中的邮箱账号都得发送。</param>
         /// <param name="apiJobDescription">ApiJob的描述，4000字内</param>
-        /// <param name="quartzCronExpression">该Job的调度计划，使用Quartz 的Cron Expression 来调度作业</param>
-        public ApiJobAttribute(string developer, string developerMail, bool exceptionOnlyToMe, string apiJobDescription, string quartzCronExpression)
+        public ApiJobAttribute(string developer, string developerMail, bool exceptionOnlyToMe, string apiJobDescription)
         {
             this.ApiJobDeveloper = developer;
             this.ApiJobDeveloperMail = developerMail;
             this.ApiJobExceptionOnlyToMe = exceptionOnlyToMe;
             this.ApiJobDescription = apiJobDescription;
-            this.ApiJobQuartzCronExpression = quartzCronExpression;
         }
 
 
@@ -54,11 +52,5 @@ namespace CockQuartz.Application
         /// Job描述，不得少于50字
         /// </summary>
         public string ApiJobDescription { get; set; }
-
-        /// <summary>
-        /// 调度计划
-        /// 具体调度计划如何设置请参照:  http://www.quartz-scheduler.net/documentation/quartz-2.x/tutorial/crontrigger.html
-        /// </summary>
-        public string ApiJobQuartzCronExpression { get; set; }
     }
 }

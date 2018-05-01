@@ -5,7 +5,9 @@ using eHi.Library.Integration.Common.Configuration;
 using eHi.Library.Interface;
 using eHi.Library.Service;
 using FeI;
+using FeI.Configuration;
 using FeI.Dependency;
+using FeI.Domain.Uow;
 using FeI.Modules;
 using Quartz;
 using Quartz.Impl;
@@ -22,7 +24,7 @@ namespace CockQuartz.Application
 #if DEBUG
             Configuration.Modules.IntegrationModule().DisableDbConfig = true;
 #endif
-            //IocManager.RegisterTypeIfNot<IConnectionStringResolver, ConnectionStringResolver>();
+            IocManager.RegisterTypeIfNot<IConnectionStringResolver, ConnectionStringResolver>();
         }
 
         public override void Initialize()
@@ -30,6 +32,11 @@ namespace CockQuartz.Application
             IocManager.RegisterTypeIfNot<IDbConnectionStringResolver, DefaultDbConnectionStringResolver>();
             IocManager.RegisterAssemblyByConvention(typeof(CockQuartzApplicationModule).GetTypeInfo().Assembly);
             ConfigQuartz();
+        }
+
+        public override void PostInitialize()
+        {
+            
         }
 
         private void ConfigQuartz()
