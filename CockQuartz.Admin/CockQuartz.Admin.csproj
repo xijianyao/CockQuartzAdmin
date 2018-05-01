@@ -383,10 +383,6 @@
       <Project>{5d7651b1-9ee8-4ece-91fd-9f90eb8e6cb4}</Project>
       <Name>CockQuartz.Application</Name>
     </ProjectReference>
-    <ProjectReference Include="..\CockQuartz.Core\CockQuartz.Core.csproj">
-      <Project>{ccfe1c85-f1c1-428b-a981-8b5e74b94dda}</Project>
-      <Name>CockQuartz.Core</Name>
-    </ProjectReference>
     <ProjectReference Include="..\CockQuartz.Interface\CockQuartz.Interface.csproj">
       <Project>{864ca1d7-65c6-42cf-95b9-aea344222b8b}</Project>
       <Name>CockQuartz.Interface</Name>

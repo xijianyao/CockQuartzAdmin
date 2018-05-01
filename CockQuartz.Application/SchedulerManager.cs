@@ -13,8 +13,6 @@ namespace CockQuartz.Application
         static IScheduler _scheduler;
         public static readonly ConcurrentDictionary<string, IScheduler> ConnectionCache = new ConcurrentDictionary<string, IScheduler>();
 
-        //private static readonly string quartzScheduler_Address = ConfigurationManager.AppSettings["QuartzProxyAddress"];
-
         public static IScheduler Instance
         {
             get

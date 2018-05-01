@@ -2,6 +2,7 @@
 using System.Reflection;
 using CockQuartz.Application;
 using CockQuartz.Core.Infrastructure;
+using CockQuartz.Model;
 using eHi.Library.Integration.Common.Configuration;
 using eHi.Library.Interface;
 using eHi.Library.Service;
@@ -15,7 +16,7 @@ using Module = FeI.Modules.Module;
 
 namespace CockQuartz.Core
 {
-    [DependsOn(typeof(CockQuartzApplicationModule))]
+    [DependsOn(typeof(CockQuartzModelModule))]
     public class CockQuartzCoreModule : Module
     {
         public override void PreInitialize()
