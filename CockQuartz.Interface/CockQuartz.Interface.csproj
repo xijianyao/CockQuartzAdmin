@@ -46,14 +46,14 @@
     <Reference Include="eHi.Common, Version=18.321.2.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\eHi.Common.18.321.2\lib\net45\eHi.Common.dll</HintPath>
     </Reference>
-    <Reference Include="eHi.Library, Version=2.1.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\eHi.Library.2.1.2\lib\net462\eHi.Library.dll</HintPath>
+    <Reference Include="eHi.Library, Version=2.2.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\eHi.Library.2.2.0\lib\net462\eHi.Library.dll</HintPath>
     </Reference>
     <Reference Include="eHi.Library.Common, Version=1.2.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\eHi.Library.Common.1.2.0\lib\net45\eHi.Library.Common.dll</HintPath>
     </Reference>
-    <Reference Include="eHi.Library.Interface, Version=2.1.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\eHi.Library.Interface.2.1.2\lib\net462\eHi.Library.Interface.dll</HintPath>
+    <Reference Include="eHi.Library.Interface, Version=2.2.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\eHi.Library.Interface.2.2.0\lib\net462\eHi.Library.Interface.dll</HintPath>
     </Reference>
     <Reference Include="EHiDBConfigNew.EhiConfig, Version=1.0.2.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\DbConfigNew.2.0.0\lib\EHiDBConfigNew.EhiConfig.dll</HintPath>

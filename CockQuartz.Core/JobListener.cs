@@ -10,12 +10,12 @@ using CockQuartz.Application;
 using CockQuartz.Model;
 using Quartz;
 
-namespace CockQuartzAdmin.JobHandler
+namespace CockQuartz.Core
 {
     public class JobListener : IJobListener
     {
         public string Name => "customerJobListener";
-        private Dictionary<string, Stopwatch> _Stopwatches = new Dictionary<string, Stopwatch>();
+        private readonly Dictionary<string, Stopwatch> _stopWatches = new Dictionary<string, Stopwatch>();
         private readonly CockQuartzDbContext _dbContext = DbContextFactory.DbContext;
 
         public JobListener()
@@ -55,7 +55,7 @@ namespace CockQuartzAdmin.JobHandler
 
                 var stopwatch = new Stopwatch();
                 stopwatch.Start();
-                _Stopwatches.Add(context.FireInstanceId, stopwatch);
+                _stopWatches.Add(context.FireInstanceId, stopwatch);
 
                 jobExecuteLogs.JobDetailId = jobDetail.Id;
                 jobExecuteLogs.JobName = jobDetail.JobName;
@@ -105,7 +105,7 @@ namespace CockQuartzAdmin.JobHandler
                     throw jobException;
                 }
 
-                var elapsed = _Stopwatches[context.FireInstanceId].ElapsedMilliseconds;
+                var elapsed = _stopWatches[context.FireInstanceId].ElapsedMilliseconds;
 
 
                 jobExecuteLogs.Message = $"JobName:{context.JobDetail.JobDataMap["jobName"]},调度结束。调度响应时间:{elapsed}ms";

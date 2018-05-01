@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 using eHi.Library.Enum;
 using eHi.Library.Interface;
 using FeI.Configuration.Startup;
 using FeI.Domain.Uow;
 
-namespace CockQuartzAdmin.Infrastructure
+namespace CockQuartz.Core.Infrastructure
 {
     /// <summary>
     ///     连接字符串解析服务

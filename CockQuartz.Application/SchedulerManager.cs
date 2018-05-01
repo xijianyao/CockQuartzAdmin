@@ -37,17 +37,6 @@ namespace CockQuartz.Application
         {
             try
             {                
-                //if (!ConnectionCache.ContainsKey(quartzScheduler_Address))
-                //{
-                //    var properties = new NameValueCollection();
-                //    properties["quartz.scheduler.proxy"] = "true";
-                //    properties["quartz.scheduler.proxy.address"] = quartzScheduler_Address;
-                //    var schedulerFactory = new StdSchedulerFactory(properties);
-                //    _scheduler = schedulerFactory.GetScheduler().Result;
-                //    ConnectionCache[quartzScheduler_Address] = _scheduler;
-                //}
-
-                //return ConnectionCache[quartzScheduler_Address];
                 ISchedulerFactory schedulerFactory = new StdSchedulerFactory();
                 return schedulerFactory.GetScheduler().Result;
             }
