@@ -1,7 +1,7 @@
 ﻿using FeI.Web;
 using Owin;
 
-namespace CockQuartzAdmin
+namespace CockQuartz.Admin
 {
     public class Startup
     {

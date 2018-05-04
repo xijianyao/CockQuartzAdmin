@@ -1,8 +1,9 @@
 ﻿using System.Web.Mvc;
 using CockQuartz.Interface;
 using CockQuartz.Model;
+using eHi.Library.Common;
 
-namespace CockQuartzAdmin.Controllers
+namespace CockQuartz.Admin.Controllers
 {
     public class JobManagementController : Controller
     {
@@ -14,8 +15,9 @@ namespace CockQuartzAdmin.Controllers
         }
 
         [HttpGet]
-        public ActionResult JobList(string groupName = "自驾官网")
+        public ActionResult JobList()
         {
+            var groupName = StartupConfig.CurrentPlatform.ToString();
             var result = _jobService.GetJobList(1, groupName);
             var instances = _jobService.GetQuartzInstances();
             ViewBag.Instances = instances;

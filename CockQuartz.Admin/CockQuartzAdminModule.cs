@@ -10,7 +10,7 @@ using FeI.Dependency;
 using FeI.Modules;
 using Module = FeI.Modules.Module;
 
-namespace CockQuartzAdmin
+namespace CockQuartz.Admin
 {
     [DependsOn(typeof(AdminModule), typeof(CockQuartzApplicationModule))]
     public class CockQuartzAdminModule : Module

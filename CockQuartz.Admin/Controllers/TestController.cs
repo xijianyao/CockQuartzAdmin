@@ -1,24 +1,20 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
 using System.Web.Http;
 using CockQuartz.Application;
 
-namespace CockQuartzAdmin.Controllers
+namespace CockQuartz.Admin.Controllers
 {
     public class TestController : ApiController
     {
         [Route("CheckUserUserSummary")]
         [ApiJob(
-            ApiJobDeveloper = "xijianyao",
-            ApiJobDeveloperMail = "cong.sun@1hai.cn",
-            ApiJobExceptionOnlyToMe = false,            
-            ApiJobDescription = "用户UserSummary检查")]
-        public string Get()
+            name:"第一个Job",
+            developer:"xijianyao",
+            developerMail : "cong.sun@1hai.cn",
+            description: "用户UserSummary检查")]
+        public void Get()
         {
-            return "value";
+            Console.WriteLine("111");
         }
 
         // POST api/<controller>

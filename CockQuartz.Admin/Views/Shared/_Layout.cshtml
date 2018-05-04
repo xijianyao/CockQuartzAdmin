@@ -1,4 +1,4 @@
-﻿@using CockQuartzAdmin.Common;
+﻿@using CockQuartz.Admin.Common
 <!DOCTYPE html>
 <html>
 
@@ -28,12 +28,12 @@
             @RenderSection("instancename", false)
             @*<ul class="list-unstyled header-opt-list clearfix">
 
-    @if (!string.IsNullOrWhiteSpace(userName) && !string.IsNullOrWhiteSpace(userId))
-     {
-         <li>欢迎您，@userName（工号：@userId）</li>
-         <li><a href="#"><i class="opt-signout"></i>退出</a></li>
-     }
-            </ul>*@
+                @if (!string.IsNullOrWhiteSpace(userName) && !string.IsNullOrWhiteSpace(userId))
+                 {
+                     <li>欢迎您，@userName（工号：@userId）</li>
+                     <li><a href="#"><i class="opt-signout"></i>退出</a></li>
+                 }
+                        </ul>*@
         </div>
     </div>
     <div id="J_Content" class="content">
@@ -43,8 +43,8 @@
 
                 <div class="sidebar-nav-item active">
                     <ul class="list-unstyled sidebar-nav-menu" id="selecedGroupName">
-                        <li class=""><a href="@(Url.Action("JobList","JobManagement")+"?groupName=" +"自驾官网")">自驾官网</a></li>
-                        <li class=""><a href="@(Url.Action("JobList","JobManagement")+"?groupName=" +"自驾后台")">自驾后台</a></li>
+                        <li class=""><a href="@Url.Action("JobList","JobManagement")">管理页面</a></li>
+                        @*<li class=""><a href="@(Url.Action("JobList","JobManagement")+"?groupName=" +"自驾后台")">自驾后台</a></li>*@
 
                     </ul>
                 </div>
@@ -52,12 +52,12 @@
 
 
                 @*@Html.Partial("~/Views/Shared/_Navigation.cshtml") 侧边栏
-                    *@
+                *@
 
             </div>
             <div id="J_HideSidebarBtn" class="sidebar-btn"><span></span></div>
         </div>
-    
+
         <!--更新Loading效果-->
         <div class="dw-btn btn-warning"></div>
 
@@ -69,7 +69,7 @@
                         <div id="navigation">
                             @RenderBody()
                         </div>
-                      
+
                     </div>
                 </div>
             </div>
@@ -82,14 +82,14 @@
     <script src="~/Scripts/loading/loading.js"></script>
     <script src="~/Scripts/Common.js?v=@MvcApplication.Version"></script>
     <script type="text/javascript">
-         $(function () {
-             //用于模糊查询
+        $(function () {
+            //用于模糊查询
 
-             $('.js-example-basic-single').select2();
-         });
+            $('.js-example-basic-single').select2();
+        });
     </script>
     @RenderSection("modal", false)
     @RenderSection("Script", false)
-   
+
 </body>
 </html>

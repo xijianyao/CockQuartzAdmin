@@ -49,7 +49,7 @@ namespace CockQuartz.Application.Infrastructure
             //if (dbContextType != null && _dbContextMapper.ContainsKey(dbContextType))
             //    return _dbConnectionStringResolver.ResolveConnectionString(_dbContextMapper[dbContextType]);
             //return _dbConnectionStringResolver.ResolveConnectionString(DbConfigType.Identity);
-            return @"data source=(localdb)\MSSQLLocalDB;initial catalog=CockQuartz;Integrated Security=True;MultipleActiveResultSets=True;App=EntityFramework";
+            return @"data source=db.dev.ehi.com.cn;initial catalog=Xijianyao;persist security info=True;user id=xijianyao;password=AAAaaa111;MultipleActiveResultSets=True;App=EntityFramework";
         }
     }
 }

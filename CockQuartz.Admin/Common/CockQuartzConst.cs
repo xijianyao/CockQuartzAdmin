@@ -1,11 +1,7 @@
 ﻿using eHi.Library.Common;
 using eHi.Library.Enum;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 
-namespace CockQuartzAdmin.Common
+namespace CockQuartz.Admin.Common
 {
     public class CockQuartzConst
     {
