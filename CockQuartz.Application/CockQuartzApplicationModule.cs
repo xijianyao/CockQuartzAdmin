@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity.Migrations;
 using System.Linq;
@@ -14,9 +15,11 @@ using FeI.Configuration;
 using FeI.Dependency;
 using FeI.Domain.Uow;
 using FeI.Modules;
+using Newtonsoft.Json;
 using Quartz;
 using Quartz.Impl;
 using Quartz.Impl.Matchers;
+using Quartz.Spi;
 using Module = FeI.Modules.Module;
 
 namespace CockQuartz.Application
@@ -24,6 +27,8 @@ namespace CockQuartz.Application
     [DependsOn(typeof(EntityFrameworkModule), typeof(CockQuartzModelModule))]
     public class CockQuartzApplicationModule : Module
     {
+        public static readonly Dictionary<string, MethodInfo> _typeDic = new Dictionary<string, MethodInfo>();
+
         public override void PreInitialize()
         {
 #if DEBUG
@@ -36,6 +41,7 @@ namespace CockQuartz.Application
         {
             IocManager.RegisterTypeIfNot<IDbConnectionStringResolver, DefaultDbConnectionStringResolver>();
             IocManager.RegisterAssemblyByConvention(typeof(CockQuartzApplicationModule).GetTypeInfo().Assembly);
+            
             ConfigQuartz();
         }
 
@@ -49,11 +55,13 @@ namespace CockQuartz.Application
             ISchedulerFactory schedulerFactory = new StdSchedulerFactory();
             var scheduler = schedulerFactory.GetScheduler().Result;
             scheduler.ListenerManager.AddJobListener(new JobListener(), GroupMatcher<JobKey>.AnyGroup());
+            //scheduler.JobFactory = IocManager.Resolve<IJobFactory>();
             scheduler.Start();
         }
 
         private void ConfigJobMethods()
         {
+            //IocManager.RegisterTypeIfNot<IJobFactory, JobService.IsolatedJobFactory>();
             var platform = StartupConfig.CurrentPlatform;
             string assemblyFilePath = AppDomain.CurrentDomain.BaseDirectory + @"Bin\" + "CockQuartz.Admin.dll";
             Assembly ass = Assembly.LoadFile(assemblyFilePath);
@@ -108,6 +116,18 @@ namespace CockQuartz.Application
                                                                                   apiJob.TriggerGroupName
                                                                                   && x.TriggerName == apiJob.TriggerName
                                                                                   && !x.IsDeleted);
+                                var jobInvocationType = new JobInvocationData
+                                {
+                                    Type = type.ToString(),
+                                    Method = methodInfo.Name
+                                };
+
+                                if (!_typeDic.ContainsKey(type.ToString()))
+                                {
+                                    _typeDic.Add(type.ToString(), methodInfo);
+                                }
+                                
+                                var jobInvocationData = JsonConvert.SerializeObject(jobInvocationType);
                                 if (job != null)
                                 {
                                     job.CreateUser = apiJob.CreateUser;
@@ -115,12 +135,14 @@ namespace CockQuartz.Application
                                     job.Description = apiJob.Description;
                                     job.UpdateTime = DateTime.Now;
                                     job.UpdateUser = apiJob.CreateUser;
+                                    job.InvocationData = jobInvocationData;
                                     dbContext.JobDetail.AddOrUpdate(job);
                                     ScheduleJob(job);
                                 }
                                 else
                                 {
                                     apiJob.CreateTime = DateTime.Now;
+                                    apiJob.InvocationData = jobInvocationData;
                                     dbContext.JobDetail.AddOrUpdate(apiJob);
                                 }
 

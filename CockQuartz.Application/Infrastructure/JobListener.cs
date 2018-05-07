@@ -42,12 +42,12 @@ namespace CockQuartz.Application.Infrastructure
                     throw new JobExecutionException("数据库中未找到该job");
                 }
 
-                if (string.IsNullOrWhiteSpace(jobDetail.RequestUrl))
+                if (string.IsNullOrWhiteSpace(jobDetail.InvocationData))
                 {
-                    throw new JobExecutionException("requestUrl为空");
+                    throw new JobExecutionException("InvocationData为空");
                 }
 
-                context.JobDetail.JobDataMap.Put("requestUrl", jobDetail.RequestUrl);
+                context.JobDetail.JobDataMap.Put("invocationData", jobDetail.InvocationData);
                 context.JobDetail.JobDataMap.Put("jobName", jobDetail.JobName);
                 context.JobDetail.JobDataMap.Put("exceptionEmail", jobDetail.ExceptionEmail);
                 context.JobDetail.JobDataMap.Put("jobGroupName", jobDetail.JobGroupName);

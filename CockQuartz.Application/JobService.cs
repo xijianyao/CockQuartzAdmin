@@ -11,6 +11,7 @@ using FeI.Domain.Repositories;
 using Quartz;
 using Quartz.Impl.Matchers;
 using eHi.Common.Dto.Paged;
+using FeI.Dependency;
 
 
 namespace CockQuartz.Application
@@ -87,7 +88,7 @@ namespace CockQuartz.Application
                             continue;
                         }//
                         jobViewModel.Cron = jobInfo.Cron;
-                        jobViewModel.RequestUrl = jobInfo.RequestUrl;
+                        //jobViewModel.RequestUrl = jobInfo.RequestUrl;
                         jobViewModel.ExceptionEmail = jobInfo.ExceptionEmail;
                         jobViewModel.Id = jobInfo.Id;
                         jobViewModel.IsInSchedule = true;
@@ -121,7 +122,7 @@ namespace CockQuartz.Application
                     jobViewModel.Cron = item.Cron;
                     jobViewModel.Id = item.Id;
                     jobViewModel.IsInSchedule = false;
-                    jobViewModel.RequestUrl = item.RequestUrl;
+                    //jobViewModel.RequestUrl = item.RequestUrl;
                     jobViewModel.ExceptionEmail = item.ExceptionEmail;
                     result.Add(jobViewModel);
                 }
@@ -298,7 +299,7 @@ withMisfireHandlingInstructionFireAndProceed
         public bool ModifyRequestUrl(int id, string requestUrl)
         {
             var jobInfo = _jobDetailRepository.FirstOrDefault(x => x.Id == id);
-            jobInfo.RequestUrl = requestUrl;
+            //jobInfo.RequestUrl = requestUrl;
             _jobDetailRepository.Update(jobInfo);
             return true;
         }
