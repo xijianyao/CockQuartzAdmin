@@ -55,13 +55,11 @@ namespace CockQuartz.Application
             ISchedulerFactory schedulerFactory = new StdSchedulerFactory();
             var scheduler = schedulerFactory.GetScheduler().Result;
             scheduler.ListenerManager.AddJobListener(new JobListener(), GroupMatcher<JobKey>.AnyGroup());
-            //scheduler.JobFactory = IocManager.Resolve<IJobFactory>();
             scheduler.Start();
         }
 
         private void ConfigJobMethods()
         {
-            //IocManager.RegisterTypeIfNot<IJobFactory, JobService.IsolatedJobFactory>();
             var platform = StartupConfig.CurrentPlatform;
             string assemblyFilePath = AppDomain.CurrentDomain.BaseDirectory + @"Bin\" + "CockQuartz.Admin.dll";
             Assembly ass = Assembly.LoadFile(assemblyFilePath);

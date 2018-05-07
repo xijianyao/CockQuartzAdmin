@@ -29,6 +29,7 @@ namespace CockQuartz.Application
                 method.Invoke(instance, BindingFlags.OptionalParamBinding | BindingFlags.InvokeMethod, null, null, System.Globalization.CultureInfo.CurrentCulture);
 
                 //await _serviceClient.RequestAsync(context.JobDetail.JobDataMap["invocationData"].ToString(), HttpVerb.Get);
+                await Task.CompletedTask;
             }
             catch (Exception ex)
             {

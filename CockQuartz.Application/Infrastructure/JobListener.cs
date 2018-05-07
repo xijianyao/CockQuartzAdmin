@@ -33,7 +33,7 @@ namespace CockQuartz.Application.Infrastructure
             var jobName = string.Empty;
             var jobId = int.Parse(context.JobDetail.JobDataMap["jobId"].ToString());
             try
-            {                
+            {
                 var jobDetail = _dbContext.JobDetail.AsNoTracking()
                     .FirstOrDefault(x => x.Id == jobId);
 
