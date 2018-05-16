@@ -6,12 +6,17 @@ using System.Threading.Tasks;
 
 namespace CockQuartz.Core.Infrastructure
 {
-    internal class ApiJobSettings
+    public class ApiJobSettings
     {
         /// <summary>
         /// 需要扫描的程序集    test.dll
         /// </summary>
         public static string ApiJobAssemblyName => System.Configuration.ConfigurationManager.AppSettings["ApiJobAssemblyName"];
+
+        /// <summary>
+        /// 实例名字
+        /// </summary>
+        public static string QuartzInstanceName => System.Configuration.ConfigurationManager.AppSettings["QuartzInstanceName"];
 
         /// <summary>
         /// 系统名称

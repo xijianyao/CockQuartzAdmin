@@ -1,4 +1,3 @@
-using FeI.Domain.Entities;
 
 namespace CockQuartz.Model
 {
@@ -9,8 +8,9 @@ namespace CockQuartz.Model
     using System.Data.Entity.Spatial;
 
     [Table("JobDetail")]
-    public partial class JobDetail : Entity, ISoftDelete
+    public partial class JobDetail
     {
+        public int Id { get; set; }
 
         [StringLength(50)]
         public string JobGroupName { get; set; }
@@ -22,7 +22,7 @@ namespace CockQuartz.Model
         public string TriggerName { get; set; }
 
         [StringLength(50)]
-        public string TriggerGroupName { get; set; }        
+        public string TriggerGroupName { get; set; }
 
         [StringLength(50)]
         public string Cron { get; set; }

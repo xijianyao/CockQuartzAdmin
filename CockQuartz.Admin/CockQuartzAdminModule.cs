@@ -31,7 +31,6 @@ namespace CockQuartz.Admin
         {
             IocManager.RegisterTypeIfNot<IDbConnectionStringResolver, DefaultDbConnectionStringResolver>();
             IocManager.RegisterAssemblyByConvention(typeof(CockQuartzAdminModule).GetTypeInfo().Assembly);
-
         }
 
     }

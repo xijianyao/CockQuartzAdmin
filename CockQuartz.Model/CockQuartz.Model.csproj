@@ -46,15 +46,6 @@
     <Reference Include="eHi.Common, Version=18.321.2.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\eHi.Common.18.321.2\lib\net45\eHi.Common.dll</HintPath>
     </Reference>
-    <Reference Include="eHi.Library, Version=2.2.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\eHi.Library.2.2.0\lib\net462\eHi.Library.dll</HintPath>
-    </Reference>
-    <Reference Include="eHi.Library.Common, Version=1.2.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\eHi.Library.Common.1.2.0\lib\net45\eHi.Library.Common.dll</HintPath>
-    </Reference>
-    <Reference Include="eHi.Library.Interface, Version=2.2.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\eHi.Library.Interface.2.2.0\lib\net462\eHi.Library.Interface.dll</HintPath>
-    </Reference>
     <Reference Include="EHiDBConfigNew.EhiConfig, Version=1.0.2.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\DbConfigNew.2.0.0\lib\EHiDBConfigNew.EhiConfig.dll</HintPath>
     </Reference>
@@ -69,18 +60,6 @@
     </Reference>
     <Reference Include="Enums.NET, Version=2.0.0.0, Culture=neutral, PublicKeyToken=7ea1c1650d506225, processorArchitecture=MSIL">
       <HintPath>..\packages\Enums.NET.2.2.0\lib\net45\Enums.NET.dll</HintPath>
-    </Reference>
-    <Reference Include="FeI, Version=2.0.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\FeI.2.0.2\lib\net462\FeI.dll</HintPath>
-    </Reference>
-    <Reference Include="FeI.Core, Version=2.0.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\FeI.Core.2.0.2\lib\net46\FeI.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="FeI.EntityFramework, Version=2.0.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\FeI.EntityFramework.2.0.2\lib\net462\FeI.EntityFramework.dll</HintPath>
-    </Reference>
-    <Reference Include="FeI.EntityFramework.Common, Version=2.0.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\FeI.EntityFramework.Common.2.0.2\lib\net462\FeI.EntityFramework.Common.dll</HintPath>
     </Reference>
     <Reference Include="JetBrains.Annotations, Version=11.1.0.0, Culture=neutral, PublicKeyToken=1010a0d8d6380325, processorArchitecture=MSIL">
       <HintPath>..\packages\JetBrains.Annotations.11.1.0\lib\net20\JetBrains.Annotations.dll</HintPath>
@@ -104,7 +83,7 @@
       <HintPath>..\packages\Microsoft.Owin.Security.OAuth.3.1.0\lib\net45\Microsoft.Owin.Security.OAuth.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.11.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="Nito.AsyncEx.Context, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Nito.AsyncEx.Context.1.1.0\lib\net46\Nito.AsyncEx.Context.dll</HintPath>
@@ -180,11 +159,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CockQuartzDbContext.cs" />
-    <Compile Include="CockQuartzModelModule.cs" />
     <Compile Include="JobDetail.cs" />
     <Compile Include="JobExecuteLogs.cs" />
-    <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="QRTZ_BLOB_TRIGGERS.cs" />
     <Compile Include="QRTZ_CALENDARS.cs" />
@@ -197,13 +173,11 @@
     <Compile Include="QRTZ_SIMPLE_TRIGGERS.cs" />
     <Compile Include="QRTZ_SIMPROP_TRIGGERS.cs" />
     <Compile Include="QRTZ_TRIGGERS.cs" />
-    <Compile Include="Repository\MainRepository.cs" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

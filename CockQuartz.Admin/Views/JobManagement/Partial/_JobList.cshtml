@@ -1,5 +1,5 @@
 ﻿@using eHi.Common.Dto.Paged;
-@model PagedResultDto<CockQuartz.Interface.JobDetailOutputDto>
+@model PagedResultDto<CockQuartz.Core.Dto.JobDetailOutputDto>
 @{
     ViewBag.Title = "_JobList";
     Layout = null;
@@ -68,7 +68,7 @@
                     <td>
                         @item.RequestUrl
                     </td>
-                    <td data-jobId='@item.Id'>
+                    <td data-jobId='@item.Id.ToString()'>
                        
                         <div class="dropdown">
                             <button class="btn btn-hollow btn-hollow-info dropdown-toggle" type="button" aria-expanded="false">

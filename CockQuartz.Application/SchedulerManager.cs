@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Collections.Specialized;
+using CockQuartz.Core.Infrastructure;
 using Quartz;
 using Quartz.Impl;
 
@@ -32,9 +34,10 @@ namespace CockQuartz.Core
         public static IScheduler GetScheduler()
         {
             try
-            {                
+            {
                 ISchedulerFactory schedulerFactory = new StdSchedulerFactory();
-                return schedulerFactory.GetScheduler().Result;
+                var scheduler = schedulerFactory.GetScheduler(ApiJobSettings.QuartzInstanceName).Result;
+                return scheduler;
             }
             catch (Exception e)
             {

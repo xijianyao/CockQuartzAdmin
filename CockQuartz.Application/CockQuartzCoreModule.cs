@@ -1,18 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.Entity.Migrations;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Reflection;
 using CockQuartz.Core.Infrastructure;
+using CockQuartz.Core.JobManager;
 using CockQuartz.Model;
-using eHi.Library.Common;
-using eHi.Library.Integration.Common.Configuration;
-using eHi.Library.Interface;
-using eHi.Library.Service;
-using FeI;
-using FeI.Dependency;
-using FeI.Domain.Uow;
-using FeI.Modules;
 using Newtonsoft.Json;
 using Quartz;
 using Quartz.Impl;
@@ -21,92 +14,138 @@ using Module = FeI.Modules.Module;
 
 namespace CockQuartz.Core
 {
-    [DependsOn(typeof(EntityFrameworkModule), typeof(CockQuartzModelModule))]
     public class CockQuartzCoreModule : Module
     {
-        public static readonly Dictionary<string, Type> _typeDic = new Dictionary<string, Type>();
+        public static readonly Dictionary<int, MethodInfo> MethodsDic = new Dictionary<int, MethodInfo>();
+        private readonly JobMangerDal _jobMangerDal;
+
+        public CockQuartzCoreModule()
+        {
+            _jobMangerDal = new JobMangerDal();
+            ConfigQuartz();
+            ConfigJobs();
+        }
 
         public override void Initialize()
         {
-            IocManager.RegisterTypeIfNot<IConnectionStringResolver, ConnectionStringResolver>();
-            IocManager.RegisterAssemblyByConvention(typeof(CockQuartzCoreModule).GetTypeInfo().Assembly);
 
-            ConfigQuartz();
-            ConfigJobMethods();
         }
 
         private void ConfigQuartz()
         {
-            ISchedulerFactory schedulerFactory = new StdSchedulerFactory();
+            var jobConnStr = JobMangerDal.GetConString();
+            NameValueCollection props = new NameValueCollection
+            {
+                { "quartz.scheduler.instanceName", ApiJobSettings.QuartzInstanceName },
+                { "quartz.threadPool.type", "Quartz.Simpl.SimpleThreadPool, Quartz" },
+                { "quartz.threadPool.threadCount", "20" },
+                { "quartz.threadPool.threadPriority", "Normal" },
+                { "quartz.jobStore.clustered", "true" },
+                { "quartz.jobStore.clusterCheckinInterval", "1000" },
+                { "quartz.jobStore.type", "Quartz.Impl.AdoJobStore.JobStoreTX, Quartz" },
+                { "quartz.serializer.type", "json" },
+                { "quartz.jobStore.tablePrefix", "qrtz_" },
+                { "quartz.jobStore.driverDelegateType", "Quartz.Impl.AdoJobStore.SqlServerDelegate, Quartz" },
+                { "quartz.jobStore.dataSource", "myDS" },
+                { "quartz.dataSource.myDS.connectionString", jobConnStr },
+                { "quartz.dataSource.myDS.provider", "SqlServer" },
+                { "quartz.scheduler.instanceId", "AUTO" }
+            };
+            ISchedulerFactory schedulerFactory = new StdSchedulerFactory(props);
             var scheduler = schedulerFactory.GetScheduler().Result;
             scheduler.ListenerManager.AddJobListener(new JobListener(), GroupMatcher<JobKey>.AnyGroup());
             scheduler.Start();
         }
 
-        private void ConfigJobMethods()
+        private void ConfigJobs()
         {
-            var platform = StartupConfig.CurrentPlatform;
-            string assemblyFilePath = AppDomain.CurrentDomain.BaseDirectory + @"Bin\" + "CockQuartz.Jobs.dll";
+            string assemblyFilePath = AppDomain.CurrentDomain.BaseDirectory + @"Bin\" + ApiJobSettings.ApiJobAssemblyName;
             Assembly ass = Assembly.LoadFile(assemblyFilePath);
             var types = ass.GetTypes();
 
-            var dbContext = DbContextFactory.DbContext;
+            var jobList = _jobMangerDal.GetJobDetailsByGroupName(ApiJobSettings.ApiJobSystemName);
 
             foreach (Type type in types)
             {
-                if (!type.IsClass && !typeof(IJob).IsAssignableFrom(type))
+                if (!type.IsClass)
                     continue;
 
-                ApiJobAttribute member = type.GetCustomAttribute<ApiJobAttribute>(false);
-                if (member != null)
+                bool mark = false;
+                var tempType = type.BaseType;
+                while (tempType != null)
                 {
-                    var apiJob = new JobDetail
+                    if (tempType.FullName == "System.Web.Http.ApiController")
                     {
-                        JobName = member.Name,
-                        JobGroupName = platform.ToString(),
-                        TriggerGroupName = platform + member.Name + "TriggerGroup",
-                        TriggerName = platform + member.Name + "Trigger",
-                    };
-
-                    var job = dbContext.JobDetail.FirstOrDefault(x => x.JobGroupName == apiJob.JobGroupName
-                                                                      && x.JobName == apiJob.JobName
-                                                                      && x.TriggerGroupName ==
-                                                                      apiJob.TriggerGroupName
-                                                                      && x.TriggerName == apiJob.TriggerName
-                                                                      && !x.IsDeleted);
-                    var jobInvocationType = new JobInvocationData
-                    {
-                        Type = type.ToString(),
-                    };
-
-                    if (!_typeDic.ContainsKey(type.ToString()))
-                    {
-                        _typeDic.Add(type.ToString(), type);
+                        mark = true;
+                        break;
                     }
-
-                    var jobInvocationData = JsonConvert.SerializeObject(jobInvocationType);
-                    if (job != null)
-                    {
-                        job.CreateUser = apiJob.CreateUser;
-                        job.ExceptionEmail = apiJob.ExceptionEmail;
-                        job.Description = apiJob.Description;
-                        job.UpdateTime = DateTime.Now;
-                        job.UpdateUser = apiJob.CreateUser;
-                        job.InvocationData = jobInvocationData;
-                        dbContext.JobDetail.AddOrUpdate(job);
-                        dbContext.SaveChanges();
-                        ScheduleJob(job);
-                    }
-                    else
-                    {
-                        apiJob.CreateTime = DateTime.Now;
-                        apiJob.InvocationData = jobInvocationData;
-                        dbContext.JobDetail.AddOrUpdate(apiJob);
-                        dbContext.SaveChanges();
-                    }
-
+                    tempType = tempType.BaseType;
                 }
-            }            
+
+                if (mark)
+                {
+                    var methods = type.GetMethods(BindingFlags.DeclaredOnly | BindingFlags.Instance |
+                                                  BindingFlags.Public | BindingFlags.OptionalParamBinding);
+                    if (methods.Length == 0)
+                    {
+                        continue;
+                    }
+
+                    foreach (MethodInfo methodInfo in methods)
+                    {
+                        if (methodInfo.ReturnType.Name == "Void" && !methodInfo.GetParameters().Any())
+                        {
+                            ApiJobAttribute member = methodInfo.GetCustomAttribute<ApiJobAttribute>(false);
+                            if (member != null)
+                            {
+                                var apiJob = new JobDetail
+                                {
+                                    JobName = member.Name,
+                                    JobGroupName = ApiJobSettings.ApiJobSystemName,
+                                    TriggerGroupName = ApiJobSettings.ApiJobSystemName + member.Name + "TriggerGroup",
+                                    TriggerName = ApiJobSettings.ApiJobSystemName + member.Name + "Trigger",
+                                    CreateUser = member.ApiJobDeveloper
+                                };
+
+                                var job = jobList.FirstOrDefault(x => x.JobName == apiJob.JobName
+                                                                      && x.TriggerGroupName == apiJob.TriggerGroupName
+                                                                      && x.TriggerName == apiJob.TriggerName);
+                                var jobInvocationType = new JobInvocationData
+                                {
+                                    Type = type.ToString(),
+                                    Method = methodInfo.ToString()
+                                };
+                                var jobInvocationData = JsonConvert.SerializeObject(jobInvocationType);
+                                int jobId;
+                                if (job != null)
+                                {
+                                    job.CreateUser = apiJob.CreateUser;
+                                    job.ExceptionEmail = apiJob.ExceptionEmail;
+                                    job.Description = apiJob.Description;
+                                    job.UpdateTime = DateTime.Now;
+                                    job.UpdateUser = apiJob.CreateUser;
+                                    job.InvocationData = jobInvocationData;
+                                    _jobMangerDal.UpdateJobDetail(job);
+                                    ScheduleJob(job);
+                                    jobId = job.Id;
+                                }
+                                else
+                                {
+                                    apiJob.CreateTime = DateTime.Now;
+                                    apiJob.InvocationData = jobInvocationData;
+                                    jobId = _jobMangerDal.InsertJobDetailAndGetId(apiJob);
+                                }
+
+                                if (!MethodsDic.ContainsKey(jobId))
+                                {
+                                    MethodsDic.Add(jobId, methodInfo);
+                                }
+
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         private void ScheduleJob(JobDetail jobDetail)

@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
+using CockQuartz.Core.JobManager;
 using CockQuartz.Model;
 using Quartz;
 
@@ -15,10 +17,11 @@ namespace CockQuartz.Core.Infrastructure
     {
         public string Name => "customerJobListener";
         private readonly Dictionary<string, Stopwatch> _stopWatches = new Dictionary<string, Stopwatch>();
-        private readonly CockQuartzDbContext _dbContext = DbContextFactory.DbContext;
+        private readonly JobMangerDal _jobMangerDal;
 
         public JobListener()
         {
+            _jobMangerDal = new JobMangerDal();
         }
 
         public async Task JobExecutionVetoed(IJobExecutionContext context, CancellationToken cancellationToken = default(CancellationToken))
@@ -34,8 +37,7 @@ namespace CockQuartz.Core.Infrastructure
             var jobId = int.Parse(context.JobDetail.JobDataMap["jobId"].ToString());
             try
             {
-                var jobDetail = _dbContext.JobDetail.AsNoTracking()
-                    .FirstOrDefault(x => x.Id == jobId);
+                var jobDetail = _jobMangerDal.GetJobDetailsById(jobId);
 
                 if (jobDetail == null)
                 {
@@ -76,12 +78,13 @@ namespace CockQuartz.Core.Infrastructure
             jobExecuteLogs.ExecuteInstanceIp = GetIp();
             jobExecuteLogs.ExecuteInstanceName = context.Scheduler.SchedulerInstanceId;
 
-            _dbContext.JobExecuteLogs.Add(jobExecuteLogs);
+            _jobMangerDal.InsertJobExecuteLogs(jobExecuteLogs);
             if (!jobExecuteLogs.IsSuccess && !string.IsNullOrWhiteSpace(exceptionEmail))
             {
                 SendExceptionEmail(exceptionEmail, jobExecuteLogs.JobName, jobExecuteLogs.ExceptionMessage, jobExecuteLogs.ExceptionStack);
             }
-            await _dbContext.SaveChangesAsync(cancellationToken);
+
+            await Task.CompletedTask;
         }
 
         public async Task JobWasExecuted(IJobExecutionContext context, JobExecutionException jobException, CancellationToken cancellationToken = default(CancellationToken))
@@ -121,17 +124,18 @@ namespace CockQuartz.Core.Infrastructure
             jobExecuteLogs.ExecuteInstanceIp = GetIp();
             jobExecuteLogs.ExecuteInstanceName = context.Scheduler.SchedulerInstanceId;
 
-            _dbContext.JobExecuteLogs.Add(jobExecuteLogs);
+            _jobMangerDal.InsertJobExecuteLogs(jobExecuteLogs);
             if (!jobExecuteLogs.IsSuccess && !string.IsNullOrWhiteSpace(exceptionEmail))
             {
                 SendExceptionEmail(exceptionEmail, jobExecuteLogs.JobName, jobExecuteLogs.ExceptionMessage, jobExecuteLogs.ExceptionStack);
             }
-            await _dbContext.SaveChangesAsync(cancellationToken);
+
+            await Task.CompletedTask;
         }
 
         private void SendExceptionEmail(string email, string jobName, string exceptionMessage, string exceptionStack)
         {
-
+            
         }
 
         private string GetIp()

@@ -1,13 +1,11 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using FeI.Domain.Entities;
-using FeI.Domain.Entities.Auditing;
 
 namespace CockQuartz.Model
 {
     [Table("JobExecuteLogs")]
-    public class JobExecuteLogs : Entity, IHasCreationTime
+    public class JobExecuteLogs 
     {
         [Index("INDEX_REGNUM")]
         public int JobDetailId { get; set; }

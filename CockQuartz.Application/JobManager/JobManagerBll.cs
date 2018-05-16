@@ -3,36 +3,31 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Data.Entity;
 using System.Linq;
+using CockQuartz.Core.Dto;
+using CockQuartz.Core.Infrastructure;
 using CockQuartz.Model;
 using eHi.Common.Dto.Paged;
-using FeI.Application;
-using FeI.Dependency;
 using FeI.Domain.Repositories;
 using Quartz;
 using Quartz.Impl.Matchers;
 
-namespace CockQuartz.Core
+namespace CockQuartz.Core.JobManager
 {
-    public class JobService : ApplicationService
+    public class JobManagerBll
     {
         private readonly IScheduler _scheduler;
-        private readonly IRepository<JobDetail> _jobDetailRepository;
-        private readonly IRepository<JobExecuteLogs> _jobExecuteLogsRepository;
-        private readonly CockQuartzDbContext _dbContext;
-        private readonly string _quartzInstanceName = ConfigurationManager.AppSettings["QuartzInstanceName"];
+        private readonly JobMangerDal _jobMangerDal;
 
-        public JobService()
+        public JobManagerBll()
         {
             _scheduler = SchedulerManager.Instance;
-            _dbContext = DbContextFactory.DbContext;
-            _jobDetailRepository = IocManager.Instance.Resolve<IRepository<JobDetail>>();
-            _jobExecuteLogsRepository = IocManager.Instance.Resolve<IRepository<JobExecuteLogs>>();
+            _jobMangerDal = new JobMangerDal();
         }
 
         public int CreateJob(JobDetail job)
         {
             job.CreateTime = DateTime.Now;
-            return _jobDetailRepository.InsertAndGetId(job);
+            return _jobMangerDal.InsertJobDetailAndGetId(job);
         }
 
         /// <summary>
@@ -46,8 +41,7 @@ namespace CockQuartz.Core
                 return null;
             }
 
-            var jobList = _jobDetailRepository.Query().AsNoTracking()
-                .Where(x => !x.IsDeleted).ToList();
+            var jobList = _jobMangerDal.GetJobDetails();
             if (!string.IsNullOrEmpty(groupNames))
             {
                 jobList = jobList.Where(x => x.JobGroupName == groupNames).ToList();
@@ -137,9 +131,7 @@ namespace CockQuartz.Core
         /// <returns></returns>
         public List<JobExecuteLogs> GetJobLogList(int jobId)
         {
-            return _jobExecuteLogsRepository.Query().AsNoTracking()
-                .Where(x => x.JobDetailId == jobId)
-                .OrderBy(x => x.Id).Take(50).ToList();
+            return _jobMangerDal.GetJobExecuteLogsByJobId(jobId);
         }
 
         /// <summary>
@@ -149,7 +141,7 @@ namespace CockQuartz.Core
         /// <returns></returns>
         public bool RunJob(int id)
         {
-            var jobInfo = _jobDetailRepository.FirstOrDefault(x => x.Id == id);
+            var jobInfo = _jobMangerDal.GetJobDetailsById(id);
 
             JobKey jobKey = CreateJobKey(jobInfo.JobName, jobInfo.JobGroupName);
             if (!_scheduler.CheckExists(jobKey).Result)
@@ -203,14 +195,14 @@ withMisfireHandlingInstructionFireAndProceed
 
         public bool DeleteJob(int id)
         {
-            var jobInfo = _jobDetailRepository.FirstOrDefault(x => x.Id == id);
+            var jobInfo = _jobMangerDal.GetJobDetailsById(id);
 
             var jobKey = CreateJobKey(jobInfo.JobName, jobInfo.JobGroupName);
             var triggerKey = CreateTriggerKey(jobInfo.TriggerName, jobInfo.TriggerGroupName);
             _scheduler.PauseTrigger(triggerKey);
             _scheduler.UnscheduleJob(triggerKey);
             _scheduler.DeleteJob(jobKey);
-            _jobDetailRepository.Delete(jobInfo);
+            _jobMangerDal.DeleteJobDetail(id);
             return true;
         }
 
@@ -221,7 +213,7 @@ withMisfireHandlingInstructionFireAndProceed
         /// <returns></returns>
         public bool PauseJob(int id)
         {
-            var jobInfo = _jobDetailRepository.FirstOrDefault(x => x.Id == id);
+            var jobInfo = _jobMangerDal.GetJobDetailsById(id);
             var jobKey = CreateJobKey(jobInfo.JobName, jobInfo.JobGroupName);
             _scheduler.PauseJob(jobKey);
             return true;
@@ -233,7 +225,7 @@ withMisfireHandlingInstructionFireAndProceed
         /// <returns></returns>
         public bool ResumeJob(int id)
         {
-            var jobInfo = _jobDetailRepository.FirstOrDefault(x => x.Id == id);
+            var jobInfo = _jobMangerDal.GetJobDetailsById(id);
             var jobKey = CreateJobKey(jobInfo.JobName, jobInfo.JobGroupName);
             _scheduler.ResumeJob(jobKey);
             return true;
@@ -245,7 +237,7 @@ withMisfireHandlingInstructionFireAndProceed
         /// <returns></returns>
         public bool StartJob(int id)
         {
-            var jobInfo = _jobDetailRepository.FirstOrDefault(x => x.Id == id);
+            var jobInfo = _jobMangerDal.GetJobDetailsById(id);
 
             CronScheduleBuilder scheduleBuilder = CronScheduleBuilder.CronSchedule(jobInfo.Cron);
             var triggerKey = CreateTriggerKey(jobInfo.TriggerName, jobInfo.TriggerGroupName);
@@ -265,7 +257,7 @@ withMisfireHandlingInstructionFireAndProceed
         /// <returns></returns>
         public bool ModifyJobCron(int id, string cron)
         {
-            var jobInfo = _jobDetailRepository.FirstOrDefault(x => x.Id == id);
+            var jobInfo = _jobMangerDal.GetJobDetailsById(id);
 
             JobKey jobKey = CreateJobKey(jobInfo.JobName, jobInfo.JobGroupName);
             if (_scheduler.CheckExists(jobKey).Result)
@@ -280,31 +272,29 @@ withMisfireHandlingInstructionFireAndProceed
             }
 
             jobInfo.Cron = cron;
-            _jobDetailRepository.Update(jobInfo);
+            _jobMangerDal.UpdateJobDetail(jobInfo);
             return true;
         }
 
         public bool ModifyExceptionEmail(int id, string exceptionEmail)
         {
-            var jobInfo = _jobDetailRepository.FirstOrDefault(x => x.Id == id);
+            var jobInfo = _jobMangerDal.GetJobDetailsById(id);
             jobInfo.ExceptionEmail = exceptionEmail;
-            _jobDetailRepository.Update(jobInfo);
+            _jobMangerDal.UpdateJobDetail(jobInfo);
             return true;
         }
 
         public bool ModifyRequestUrl(int id, string requestUrl)
         {
-            var jobInfo = _jobDetailRepository.FirstOrDefault(x => x.Id == id);
-            //jobInfo.RequestUrl = requestUrl;
-            _jobDetailRepository.Update(jobInfo);
+            var jobInfo = _jobMangerDal.GetJobDetailsById(id);
+            _jobMangerDal.UpdateJobDetail(jobInfo);
             return true;
         }
 
         public List<QuartzInstanceOutputDto> GetQuartzInstances()
         {
-            var instanceInfos = _dbContext.QRTZ_SCHEDULER_STATE.AsNoTracking()
-                .Where(x => x.SCHED_NAME == _quartzInstanceName)
-                .ToList();
+            var instanceInfos = _jobMangerDal.GetSchedulerState(ApiJobSettings.QuartzInstanceName);
+
             var result = new List<QuartzInstanceOutputDto>();
             if (instanceInfos.Any())
             {

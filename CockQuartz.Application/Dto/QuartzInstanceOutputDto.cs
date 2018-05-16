@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace CockQuartz.Core
+namespace CockQuartz.Core.Dto
 {
     public class QuartzInstanceOutputDto
     {
