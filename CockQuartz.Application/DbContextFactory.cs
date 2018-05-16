@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.Remoting.Messaging;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Runtime.Remoting.Messaging;
 using CockQuartz.Model;
 
-namespace CockQuartz.Application
+namespace CockQuartz.Core
 {
     public class DbContextFactory
     {
@@ -14,12 +9,12 @@ namespace CockQuartz.Application
         {
             get
             {
-                if (!(CallContext.GetData("DbContext") is CockQuartzDbContext _dbContext))
+                if (!(CallContext.GetData("DbContext") is CockQuartzDbContext dbContext))
                 {
-                    _dbContext = new CockQuartzDbContext();
-                    CallContext.SetData("DbContext", _dbContext);
+                    dbContext = new CockQuartzDbContext();
+                    CallContext.SetData("DbContext", dbContext);
                 }
-                return _dbContext;
+                return dbContext;
             }
 
         }

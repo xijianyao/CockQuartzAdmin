@@ -2,21 +2,18 @@
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data.Entity;
-using System.Globalization;
 using System.Linq;
-using CockQuartz.Interface;
 using CockQuartz.Model;
+using eHi.Common.Dto.Paged;
 using FeI.Application;
+using FeI.Dependency;
 using FeI.Domain.Repositories;
 using Quartz;
 using Quartz.Impl.Matchers;
-using eHi.Common.Dto.Paged;
-using FeI.Dependency;
 
-
-namespace CockQuartz.Application
+namespace CockQuartz.Core
 {
-    public class JobService : ApplicationService, IJobService
+    public class JobService : ApplicationService
     {
         private readonly IScheduler _scheduler;
         private readonly IRepository<JobDetail> _jobDetailRepository;
@@ -24,13 +21,12 @@ namespace CockQuartz.Application
         private readonly CockQuartzDbContext _dbContext;
         private readonly string _quartzInstanceName = ConfigurationManager.AppSettings["QuartzInstanceName"];
 
-        public JobService(IRepository<JobDetail> jobDetailRepository,
-            IRepository<JobExecuteLogs> jobExecuteLogsRepository)
+        public JobService()
         {
-            _jobDetailRepository = jobDetailRepository;
             _scheduler = SchedulerManager.Instance;
             _dbContext = DbContextFactory.DbContext;
-            _jobExecuteLogsRepository = jobExecuteLogsRepository;
+            _jobDetailRepository = IocManager.Instance.Resolve<IRepository<JobDetail>>();
+            _jobExecuteLogsRepository = IocManager.Instance.Resolve<IRepository<JobExecuteLogs>>();
         }
 
         public int CreateJob(JobDetail job)
@@ -135,7 +131,7 @@ namespace CockQuartz.Application
         }
 
         /// <summary>
-        /// 获取执行日子
+        /// 获取执行日志
         /// </summary>
         /// <param name="jobId"></param>
         /// <returns></returns>

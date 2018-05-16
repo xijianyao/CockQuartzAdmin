@@ -1,19 +1,14 @@
 ﻿using System;
 using System.Web.Http;
-using CockQuartz.Application;
-using FeI.Dependency;
-using ServiceClients;
+using CockQuartz.Core.Infrastructure;
 
 namespace CockQuartz.Admin.Controllers
 {
     public class TestController : ApiController
     {
+
         [Route("CheckUserUserSummary")]
-        [ApiJob(
-            name: "第一个Job",
-            developer: "xijianyao",
-            developerMail: "cong.sun@1hai.cn",
-            description: "用户UserSummary检查")]
+        [ApiJob("CheckUserUserSummary")]
         public void Get()
         {
             Console.WriteLine("111");

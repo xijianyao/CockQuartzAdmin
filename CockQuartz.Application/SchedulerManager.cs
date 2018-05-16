@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using System.Collections.Specialized;
-using System.Configuration;
 using Quartz;
 using Quartz.Impl;
 
-namespace CockQuartz.Application
+namespace CockQuartz.Core
 {
     public class SchedulerManager
     {

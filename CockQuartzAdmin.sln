@@ -7,9 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CockQuartz.Model", "CockQua
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CockQuartz.Admin", "CockQuartz.Admin\CockQuartz.Admin.csproj", "{E36CD613-A65F-4260-8079-0BF39E538811}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CockQuartz.Interface", "CockQuartz.Interface\CockQuartz.Interface.csproj", "{864CA1D7-65C6-42CF-95B9-AEA344222B8B}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CockQuartz.Application", "CockQuartz.Application\CockQuartz.Application.csproj", "{5D7651B1-9EE8-4ECE-91FD-9F90EB8E6CB4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CockQuartz.Core", "CockQuartz.Application\CockQuartz.Core.csproj", "{5D7651B1-9EE8-4ECE-91FD-9F90EB8E6CB4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -25,10 +23,6 @@ Global
 		{E36CD613-A65F-4260-8079-0BF39E538811}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E36CD613-A65F-4260-8079-0BF39E538811}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E36CD613-A65F-4260-8079-0BF39E538811}.Release|Any CPU.Build.0 = Release|Any CPU
-		{864CA1D7-65C6-42CF-95B9-AEA344222B8B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{864CA1D7-65C6-42CF-95B9-AEA344222B8B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{864CA1D7-65C6-42CF-95B9-AEA344222B8B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{864CA1D7-65C6-42CF-95B9-AEA344222B8B}.Release|Any CPU.Build.0 = Release|Any CPU
 		{5D7651B1-9EE8-4ECE-91FD-9F90EB8E6CB4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{5D7651B1-9EE8-4ECE-91FD-9F90EB8E6CB4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5D7651B1-9EE8-4ECE-91FD-9F90EB8E6CB4}.Release|Any CPU.ActiveCfg = Release|Any CPU

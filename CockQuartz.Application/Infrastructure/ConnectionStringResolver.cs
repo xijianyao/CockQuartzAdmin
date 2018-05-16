@@ -5,7 +5,7 @@ using eHi.Library.Interface;
 using FeI.Configuration.Startup;
 using FeI.Domain.Uow;
 
-namespace CockQuartz.Application.Infrastructure
+namespace CockQuartz.Core.Infrastructure
 {
     /// <summary>
     ///     连接字符串解析服务

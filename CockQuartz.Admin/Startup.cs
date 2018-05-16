@@ -1,4 +1,5 @@
-﻿using FeI.Web;
+﻿using CockQuartz.Core;
+using FeI.Web;
 using Owin;
 
 namespace CockQuartz.Admin
@@ -8,7 +9,9 @@ namespace CockQuartz.Admin
         public void Configuration(IAppBuilder app)
         {
             //设置启动模块
-            app.UseFeI<CockQuartzAdminModule>();
+            //app.UseFeI<CockQuartzAdminModule>();
+            var module = new CockQuartzCoreModule();
+            module.Initialize();
         }
     }
 }

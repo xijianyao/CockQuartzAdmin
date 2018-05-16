@@ -7,8 +7,8 @@
     <ProjectGuid>{5D7651B1-9EE8-4ECE-91FD-9F90EB8E6CB4}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>CockQuartz.Application</RootNamespace>
-    <AssemblyName>CockQuartz.Application</AssemblyName>
+    <RootNamespace>CockQuartz.Core</RootNamespace>
+    <AssemblyName>CockQuartz.Core</AssemblyName>
     <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
@@ -267,22 +267,21 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ApiJobAttribute.cs" />
-    <Compile Include="CockQuartzApplicationModule.cs" />
+    <Compile Include="Infrastructure\ApiJobAttribute.cs" />
+    <Compile Include="CockQuartzCoreModule.cs" />
     <Compile Include="DbContextFactory.cs" />
+    <Compile Include="Infrastructure\ApiJobSettings.cs" />
     <Compile Include="Infrastructure\ConnectionStringResolver.cs" />
     <Compile Include="Infrastructure\JobInvocationData.cs" />
     <Compile Include="Infrastructure\JobListener.cs" />
     <Compile Include="JobBase.cs" />
+    <Compile Include="JobDetailOutputDto.cs" />
     <Compile Include="JobService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="QuartzInstanceOutputDto.cs" />
     <Compile Include="SchedulerManager.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\CockQuartz.Interface\CockQuartz.Interface.csproj">
-      <Project>{864ca1d7-65c6-42cf-95b9-aea344222b8b}</Project>
-      <Name>CockQuartz.Interface</Name>
-    </ProjectReference>
     <ProjectReference Include="..\CockQuartz.Model\CockQuartz.Model.csproj">
       <Project>{1dc679bf-7df2-4757-a6f5-0d0925a02ede}</Project>
       <Name>CockQuartz.Model</Name>

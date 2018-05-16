@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using CockQuartz.Model;
 using Quartz;
 
-namespace CockQuartz.Application.Infrastructure
+namespace CockQuartz.Core.Infrastructure
 {
     public class JobListener : IJobListener
     {

@@ -1,22 +1,24 @@
 ﻿using System.Web.Mvc;
-using CockQuartz.Interface;
+using CockQuartz.Core;
 using CockQuartz.Model;
 using eHi.Library.Common;
+using FeI.Dependency;
 
 namespace CockQuartz.Admin.Controllers
 {
     public class JobManagementController : Controller
     {
-        private readonly IJobService _jobService;
+        private readonly JobService _jobService;
 
-        public JobManagementController(IJobService jobService)
+        public JobManagementController()
         {
-            _jobService = jobService;
+            _jobService = new JobService();
         }
 
         [HttpGet]
         public ActionResult JobList()
         {
+
             var groupName = StartupConfig.CurrentPlatform.ToString();
             var result = _jobService.GetJobList(1, groupName);
             var instances = _jobService.GetQuartzInstances();
@@ -29,7 +31,7 @@ namespace CockQuartz.Admin.Controllers
         {
             var result = _jobService.GetJobList(pageIndex, groupName);
             ViewBag.GroupName = groupName;
-            return View("Partial/_JobList",result);
+            return View("Partial/_JobList", result);
         }
 
         [HttpGet]

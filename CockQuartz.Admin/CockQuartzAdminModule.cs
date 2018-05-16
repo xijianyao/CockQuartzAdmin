@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Reflection;
-using CockQuartz.Application;
+using CockQuartz.Core;
 using eHi.Common.Enum;
 using eHi.Library.Extensions;
 using eHi.Library.Integration.Admin;
@@ -14,7 +14,7 @@ using Module = FeI.Modules.Module;
 
 namespace CockQuartz.Admin
 {
-    [DependsOn(typeof(AdminModule), typeof(CockQuartzApplicationModule), typeof(ApiModule))]
+    [DependsOn(typeof(AdminModule), typeof(CockQuartzCoreModule), typeof(ApiModule))]
     public class CockQuartzAdminModule : Module
     {
         public override void PreInitialize()
@@ -23,15 +23,15 @@ namespace CockQuartz.Admin
             Configuration.Modules.IntegrationModule().DisableDbConfig = true;
 #endif
             //IocManager.RegisterTypeIfNot<IConnectionStringResolver, ConnectionStringResolver>();
+            Configuration
+                .SetPlatform(Platform.Test);
         }
 
         public override void Initialize()
         {
-            
             IocManager.RegisterTypeIfNot<IDbConnectionStringResolver, DefaultDbConnectionStringResolver>();
             IocManager.RegisterAssemblyByConvention(typeof(CockQuartzAdminModule).GetTypeInfo().Assembly);
-            Configuration
-                .SetPlatform(Platform.Test);
+
         }
 
     }
