@@ -33,28 +33,8 @@ namespace CockQuartz.Core
 
         private void ConfigQuartz()
         {
-            var jobConnStr = JobMangerDal.GetConString();
-            NameValueCollection props = new NameValueCollection
-            {
-                { "quartz.scheduler.instanceName", ApiJobSettings.QuartzInstanceName },
-                { "quartz.threadPool.type", "Quartz.Simpl.SimpleThreadPool, Quartz" },
-                { "quartz.threadPool.threadCount", "20" },
-                { "quartz.threadPool.threadPriority", "Normal" },
-                { "quartz.jobStore.clustered", "true" },
-                { "quartz.jobStore.clusterCheckinInterval", "1000" },
-                { "quartz.jobStore.type", "Quartz.Impl.AdoJobStore.JobStoreTX, Quartz" },
-                { "quartz.serializer.type", "json" },
-                { "quartz.jobStore.tablePrefix", "qrtz_" },
-                { "quartz.jobStore.driverDelegateType", "Quartz.Impl.AdoJobStore.SqlServerDelegate, Quartz" },
-                { "quartz.jobStore.dataSource", "myDS" },
-                { "quartz.dataSource.myDS.connectionString", jobConnStr },
-                { "quartz.dataSource.myDS.provider", "SqlServer" },
-                { "quartz.scheduler.instanceId", "AUTO" }
-            };
-            ISchedulerFactory schedulerFactory = new StdSchedulerFactory(props);
-            var scheduler = schedulerFactory.GetScheduler().Result;
-            scheduler.ListenerManager.AddJobListener(new JobListener(), GroupMatcher<JobKey>.AnyGroup());
-            scheduler.Start();
+            var scheduler = SchedulerManager.Instance;
+            scheduler.Start();  
         }
 
         private void ConfigJobs()

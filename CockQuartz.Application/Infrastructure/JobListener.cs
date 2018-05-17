@@ -5,6 +5,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Net;
 using System.Net.Sockets;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using CockQuartz.Core.JobManager;
@@ -77,6 +78,7 @@ namespace CockQuartz.Core.Infrastructure
 
             jobExecuteLogs.ExecuteInstanceIp = GetIp();
             jobExecuteLogs.ExecuteInstanceName = context.Scheduler.SchedulerInstanceId;
+            jobExecuteLogs.CreationTime = DateTime.Now;
 
             _jobMangerDal.InsertJobExecuteLogs(jobExecuteLogs);
             if (!jobExecuteLogs.IsSuccess && !string.IsNullOrWhiteSpace(exceptionEmail))
@@ -117,12 +119,13 @@ namespace CockQuartz.Core.Infrastructure
             {
                 jobExecuteLogs.Message = $"JobName:{context.JobDetail.JobDataMap["jobName"]},调度出现异常:{ex.Message}";
                 jobExecuteLogs.IsSuccess = false;
-                jobExecuteLogs.ExceptionMessage = ex.Message;
+                jobExecuteLogs.ExceptionMessage = GetAllExceptionInfo(ex);
                 jobExecuteLogs.ExceptionStack = ex.StackTrace;
             }
 
             jobExecuteLogs.ExecuteInstanceIp = GetIp();
             jobExecuteLogs.ExecuteInstanceName = context.Scheduler.SchedulerInstanceId;
+            jobExecuteLogs.CreationTime = DateTime.Now;
 
             _jobMangerDal.InsertJobExecuteLogs(jobExecuteLogs);
             if (!jobExecuteLogs.IsSuccess && !string.IsNullOrWhiteSpace(exceptionEmail))
@@ -150,6 +153,24 @@ namespace CockQuartz.Core.Infrastructure
             }
 
             return alAllLocalIp;
+        }
+
+
+        private static string GetAllExceptionInfo(Exception e)
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine(e.Message);
+            sb.AppendLine(e.ToString());
+
+            var ex = e.InnerException;
+
+            while (ex != null)
+            {
+                sb.AppendLine(ex.Message);
+                sb.AppendLine(ex.ToString());
+                ex = ex.InnerException;
+            }
+            return sb.ToString();
         }
     }
 }
