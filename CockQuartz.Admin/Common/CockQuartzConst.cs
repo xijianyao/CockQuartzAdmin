@@ -15,7 +15,7 @@ namespace CockQuartz.Admin.Common
             else
             {
 
-                StaticUrl = "http://192.168.1.229:9099/";
+                StaticUrl = "http://demo5.1hai.cn/resource/";
             }
         }
 

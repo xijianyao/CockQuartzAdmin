@@ -77,7 +77,7 @@ namespace CockQuartz.Core.JobManager
             JobDetail result;
             using (var dbExecuter = _dbExecutorFactory.CreateExecutor(_connectString))
             {
-                string sql = "select * from jobdetail where id= @Id isdeleted = 0";
+                string sql = "select * from jobdetail where id= @Id and isdeleted = 0";
                 result = dbExecuter.Query<JobDetail>(sql, new { Id = id }).FirstOrDefault();
             }
             return result;
