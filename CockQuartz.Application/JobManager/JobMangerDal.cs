@@ -131,17 +131,18 @@ select @@identity
             }
         }
 
-        public void InsertJobExecuteLogs(JobExecuteLogs jobExecuteLogs)
+        public int InsertJobExecuteLogs(JobExecuteLogs jobExecuteLogs)
         {
             using (var dbExecuter = _dbExecutorFactory.CreateExecutor(_connectString))
             {
                 string sql = @"
 INSERT INTO [dbo].[JobExecuteLogs]([JobDetailId],[JobGroupName],[JobName],[IsSuccess],[ExecuteInstanceName]
-           ,[ExecuteInstanceIp],[Message],[ExceptionMessage],[ExceptionStack],[CreationTime])
+           ,[ExecuteInstanceIp],[Message],[ExceptionMessage],[CreationTime])
      VALUES
            (@JobDetailId,@JobGroupName,@JobName,@IsSuccess,@ExecuteInstanceName
-           ,@ExecuteInstanceIp,@Message,@ExceptionMessage,@ExceptionStack,@CreationTime)";
-                dbExecuter.Execute(sql, jobExecuteLogs);
+           ,@ExecuteInstanceIp,@Message,@ExceptionMessage,@CreationTime) 
+select @@identity ";
+                return dbExecuter.Query<int>(sql, jobExecuteLogs).First();
             }
 
         }

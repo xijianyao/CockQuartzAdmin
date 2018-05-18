@@ -35,6 +35,14 @@ namespace CockQuartz.Admin.Controllers
             Console.WriteLine("111");
         }
 
+        [Route("SendRequest1")]
+        [ApiJob(name: "SendRequest1", apiJobDeveloper: "xijianyao1")]
+        public void SendRequest1()
+        {
+            _serviceClient.Request<string>("http://www.baidu.com", HttpVerb.Get, new { });
+            Console.WriteLine("111");
+        }
+
         // POST api/<controller>
         public void Post([FromBody]string value)
         {

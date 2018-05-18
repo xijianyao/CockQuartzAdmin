@@ -10,6 +10,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using CockQuartz.Core.JobManager;
 using CockQuartz.Model;
+using eHi.Library.Dto;
+using eHi.Library.Interface;
+using eHi.Library.Service;
 using Quartz;
 
 namespace CockQuartz.Core.Infrastructure
@@ -19,10 +22,12 @@ namespace CockQuartz.Core.Infrastructure
         public string Name => "customerJobListener";
         private readonly Dictionary<string, Stopwatch> _stopWatches = new Dictionary<string, Stopwatch>();
         private readonly JobMangerDal _jobMangerDal;
+        private readonly IMessageService _messageService;
 
         public JobListener()
         {
             _jobMangerDal = new JobMangerDal();
+            _messageService = new MessageService();
         }
 
         public async Task JobExecutionVetoed(IJobExecutionContext context, CancellationToken cancellationToken = default(CancellationToken))
@@ -45,6 +50,7 @@ namespace CockQuartz.Core.Infrastructure
                     throw new JobExecutionException("数据库中未找到该job");
                 }
 
+                jobName = jobDetail.JobName;
                 if (string.IsNullOrWhiteSpace(jobDetail.InvocationData))
                 {
                     throw new JobExecutionException("InvocationData为空");
@@ -70,10 +76,9 @@ namespace CockQuartz.Core.Infrastructure
             catch (Exception ex)
             {
                 jobExecuteLogs.JobDetailId = jobId;
-                jobExecuteLogs.Message = $"发送调度出现异常:{ex.Message}";
+                jobExecuteLogs.Message = $"JobName:{jobName}发送调度出现异常:{ex.Message}";
                 jobExecuteLogs.IsSuccess = false;
-                jobExecuteLogs.ExceptionMessage = ex.Message;
-                jobExecuteLogs.ExceptionStack = ex.StackTrace;
+                jobExecuteLogs.ExceptionMessage = GetAllExceptionInfo(ex);
             }
 
             jobExecuteLogs.ExecuteInstanceIp = GetIp();
@@ -83,7 +88,7 @@ namespace CockQuartz.Core.Infrastructure
             _jobMangerDal.InsertJobExecuteLogs(jobExecuteLogs);
             if (!jobExecuteLogs.IsSuccess && !string.IsNullOrWhiteSpace(exceptionEmail))
             {
-                SendExceptionEmail(exceptionEmail, jobExecuteLogs.JobName, jobExecuteLogs.ExceptionMessage, jobExecuteLogs.ExceptionStack);
+                SendExceptionEmail(exceptionEmail, jobExecuteLogs.Message + jobExecuteLogs.ExceptionMessage);
             }
 
             await Task.CompletedTask;
@@ -112,15 +117,14 @@ namespace CockQuartz.Core.Infrastructure
                 var elapsed = _stopWatches[context.FireInstanceId].ElapsedMilliseconds;
 
 
-                jobExecuteLogs.Message = $"JobName:{context.JobDetail.JobDataMap["jobName"]},调度结束。调度响应时间:{elapsed}ms";
+                jobExecuteLogs.Message = $"JobName:{context.JobDetail.JobDataMap["jobName"]},执行结束。执行时间:{elapsed}ms";
                 jobExecuteLogs.IsSuccess = true;
             }
             catch (Exception ex)
             {
-                jobExecuteLogs.Message = $"JobName:{context.JobDetail.JobDataMap["jobName"]},调度出现异常:{ex.Message}";
+                jobExecuteLogs.Message = $"JobName:{context.JobDetail.JobDataMap["jobName"]},执行出现异常:{ex.Message}";
                 jobExecuteLogs.IsSuccess = false;
                 jobExecuteLogs.ExceptionMessage = GetAllExceptionInfo(ex);
-                jobExecuteLogs.ExceptionStack = ex.StackTrace;
             }
 
             jobExecuteLogs.ExecuteInstanceIp = GetIp();
@@ -130,15 +134,24 @@ namespace CockQuartz.Core.Infrastructure
             _jobMangerDal.InsertJobExecuteLogs(jobExecuteLogs);
             if (!jobExecuteLogs.IsSuccess && !string.IsNullOrWhiteSpace(exceptionEmail))
             {
-                SendExceptionEmail(exceptionEmail, jobExecuteLogs.JobName, jobExecuteLogs.ExceptionMessage, jobExecuteLogs.ExceptionStack);
+                SendExceptionEmail(exceptionEmail, jobExecuteLogs.Message + jobExecuteLogs.ExceptionMessage);
             }
 
             await Task.CompletedTask;
         }
 
-        private void SendExceptionEmail(string email, string jobName, string exceptionMessage, string exceptionStack)
+        private void SendExceptionEmail(string email, string exceptionMessage)
         {
-            
+            _messageService.SendEmail(new EmailDto
+            {
+                SendTo = email,
+                EmailId = 300014,
+                OperatorId = "ApiJob",
+                Parameters = new Dictionary<string, string>
+                    {
+                        {"Content",exceptionMessage}
+                    }
+            });
         }
 
         private string GetIp()

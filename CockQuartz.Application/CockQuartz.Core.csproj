@@ -55,6 +55,15 @@
     <Reference Include="eHi.Common, Version=18.321.2.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\eHi.Common.18.321.2\lib\net45\eHi.Common.dll</HintPath>
     </Reference>
+    <Reference Include="eHi.Library, Version=2.4.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\eHi.Library.2.4.2\lib\net462\eHi.Library.dll</HintPath>
+    </Reference>
+    <Reference Include="eHi.Library.Common, Version=1.3.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\eHi.Library.Common.1.3.0\lib\net45\eHi.Library.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="eHi.Library.Interface, Version=2.4.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\eHi.Library.Interface.2.4.2\lib\net462\eHi.Library.Interface.dll</HintPath>
+    </Reference>
     <Reference Include="EHiDBConfigNew.EhiConfig, Version=1.0.2.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\DbConfigNew.2.0.0\lib\EHiDBConfigNew.EhiConfig.dll</HintPath>
     </Reference>
@@ -75,6 +84,9 @@
     </Reference>
     <Reference Include="Exceptionless.NLog, Version=4.2.1982.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Exceptionless.NLog.4.2.1983\lib\net45\Exceptionless.NLog.dll</HintPath>
+    </Reference>
+    <Reference Include="FeI, Version=2.0.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\FeI.2.0.3\lib\net462\FeI.dll</HintPath>
     </Reference>
     <Reference Include="FeI.Core, Version=2.0.3.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\FeI.Core.2.0.3\lib\net46\FeI.Core.dll</HintPath>

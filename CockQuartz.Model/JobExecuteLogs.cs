@@ -27,11 +27,7 @@ namespace CockQuartz.Model
         [StringLength(500)]
         public string Message { get; set; }
 
-        [StringLength(500)]
         public string ExceptionMessage { get; set; }
-
-        [StringLength(5000)]
-        public string ExceptionStack { get; set; }
 
         public DateTime CreationTime { get; set; }
     }
