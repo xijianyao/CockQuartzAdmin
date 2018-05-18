@@ -95,7 +95,6 @@ namespace CockQuartz.Core
                                     Type = type.ToString(),
                                     Method = methodInfo.ToString()
                                 };
-                                var jobInvocationData = JsonConvert.SerializeObject(jobInvocationType);
                                 int jobId;
                                 if (job != null)
                                 {
@@ -104,7 +103,6 @@ namespace CockQuartz.Core
                                     job.Description = apiJob.Description;
                                     job.UpdateTime = DateTime.Now;
                                     job.UpdateUser = apiJob.CreateUser;
-                                    job.InvocationData = jobInvocationData;
                                     _jobMangerDal.UpdateJobDetail(job);
                                     ScheduleJob(job);
                                     jobId = job.Id;
@@ -112,7 +110,6 @@ namespace CockQuartz.Core
                                 else
                                 {
                                     apiJob.CreateTime = DateTime.Now;
-                                    apiJob.InvocationData = jobInvocationData;
                                     jobId = _jobMangerDal.InsertJobDetailAndGetId(apiJob);
                                 }
 

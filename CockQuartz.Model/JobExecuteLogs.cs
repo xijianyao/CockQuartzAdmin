@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace CockQuartz.Model
 {
     [Table("JobExecuteLogs")]
-    public class JobExecuteLogs 
+    public class JobExecuteLogs
     {
         [Index("INDEX_REGNUM")]
         public int JobDetailId { get; set; }
@@ -30,5 +30,7 @@ namespace CockQuartz.Model
         public string ExceptionMessage { get; set; }
 
         public DateTime CreationTime { get; set; }
+
+        public long Duration { get; set; }
     }
 }

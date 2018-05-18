@@ -40,9 +40,6 @@ namespace CockQuartz.Model
         [StringLength(50)]
         public string UpdateUser { get; set; }
 
-        [StringLength(2000)]
-        public string InvocationData { get; set; }
-
         [StringLength(200)]
         public string ExceptionEmail { get; set; }
 

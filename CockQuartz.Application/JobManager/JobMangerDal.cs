@@ -137,10 +137,10 @@ select @@identity
             {
                 string sql = @"
 INSERT INTO [dbo].[JobExecuteLogs]([JobDetailId],[JobGroupName],[JobName],[IsSuccess],[ExecuteInstanceName]
-           ,[ExecuteInstanceIp],[Message],[ExceptionMessage],[CreationTime])
+           ,[ExecuteInstanceIp],[Message],[ExceptionMessage],[CreationTime],[Duration])
      VALUES
            (@JobDetailId,@JobGroupName,@JobName,@IsSuccess,@ExecuteInstanceName
-           ,@ExecuteInstanceIp,@Message,@ExceptionMessage,@CreationTime) 
+           ,@ExecuteInstanceIp,@Message,@ExceptionMessage,@CreationTime,@Duration) 
 select @@identity ";
                 return dbExecuter.Query<int>(sql, jobExecuteLogs).First();
             }

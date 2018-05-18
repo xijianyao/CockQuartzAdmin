@@ -37,104 +37,61 @@ namespace CockQuartz.Core.Infrastructure
 
         public async Task JobToBeExecuted(IJobExecutionContext context, CancellationToken cancellationToken = default(CancellationToken))
         {
-            var jobExecuteLogs = new JobExecuteLogs();
-            var exceptionEmail = string.Empty;
-            var jobName = string.Empty;
-            var jobId = int.Parse(context.JobDetail.JobDataMap["jobId"].ToString());
-            try
-            {
-                var jobDetail = _jobMangerDal.GetJobDetailsById(jobId);
-
-                if (jobDetail == null)
-                {
-                    throw new JobExecutionException("数据库中未找到该job");
-                }
-
-                jobName = jobDetail.JobName;
-                if (string.IsNullOrWhiteSpace(jobDetail.InvocationData))
-                {
-                    throw new JobExecutionException("InvocationData为空");
-                }
-
-                context.JobDetail.JobDataMap.Put("invocationData", jobDetail.InvocationData);
-                context.JobDetail.JobDataMap.Put("jobName", jobDetail.JobName);
-                context.JobDetail.JobDataMap.Put("exceptionEmail", jobDetail.ExceptionEmail);
-                context.JobDetail.JobDataMap.Put("jobGroupName", jobDetail.JobGroupName);
-
-                var stopwatch = new Stopwatch();
-                stopwatch.Start();
-                _stopWatches.Add(context.FireInstanceId, stopwatch);
-
-                jobExecuteLogs.JobDetailId = jobDetail.Id;
-                jobExecuteLogs.JobName = jobDetail.JobName;
-                jobExecuteLogs.JobGroupName = jobDetail.JobGroupName;
-                jobExecuteLogs.Message = $"JobName:{jobDetail.JobName},发送调度";
-                jobExecuteLogs.IsSuccess = true;
-
-                exceptionEmail = jobDetail.ExceptionEmail;
-            }
-            catch (Exception ex)
-            {
-                jobExecuteLogs.JobDetailId = jobId;
-                jobExecuteLogs.Message = $"JobName:{jobName}发送调度出现异常:{ex.Message}";
-                jobExecuteLogs.IsSuccess = false;
-                jobExecuteLogs.ExceptionMessage = GetAllExceptionInfo(ex);
-            }
-
-            jobExecuteLogs.ExecuteInstanceIp = GetIp();
-            jobExecuteLogs.ExecuteInstanceName = context.Scheduler.SchedulerInstanceId;
-            jobExecuteLogs.CreationTime = DateTime.Now;
-
-            _jobMangerDal.InsertJobExecuteLogs(jobExecuteLogs);
-            if (!jobExecuteLogs.IsSuccess && !string.IsNullOrWhiteSpace(exceptionEmail))
-            {
-                SendExceptionEmail(exceptionEmail, jobExecuteLogs.Message + jobExecuteLogs.ExceptionMessage);
-            }
+            var stopwatch = new Stopwatch();
+            stopwatch.Start();
+            _stopWatches.Add(context.FireInstanceId, stopwatch);
 
             await Task.CompletedTask;
         }
 
         public async Task JobWasExecuted(IJobExecutionContext context, JobExecutionException jobException, CancellationToken cancellationToken = default(CancellationToken))
         {
-
+            var jobId = int.Parse(context.JobDetail.JobDataMap["jobId"].ToString());
             var jobExecuteLogs =
                 new JobExecuteLogs
                 {
-                    JobDetailId = int.Parse(context.JobDetail.JobDataMap["jobId"].ToString()),
-                    JobName = context.JobDetail.JobDataMap["jobName"].ToString(),
-                    JobGroupName = context.JobDetail.JobDataMap["jobGroupName"].ToString()
+                    JobDetailId = jobId
                 };
 
             var exceptionEmail = string.Empty;
-
             try
             {
+                var jobDetail = _jobMangerDal.GetJobDetailsById(jobId);
+                if (jobDetail == null)
+                {
+                    throw new Exception($"未找到此Job，JobId{jobId}");
+                }
+
+                exceptionEmail = jobDetail.ExceptionEmail;
+
                 if (jobException != null)
                 {
                     throw jobException;
                 }
 
-                var elapsed = _stopWatches[context.FireInstanceId].ElapsedMilliseconds;
-
-
-                jobExecuteLogs.Message = $"JobName:{context.JobDetail.JobDataMap["jobName"]},执行结束。执行时间:{elapsed}ms";
+                jobExecuteLogs.Message = $"JobName:{context.JobDetail.JobDataMap["jobName"]},执行结束。";
                 jobExecuteLogs.IsSuccess = true;
             }
             catch (Exception ex)
             {
-                jobExecuteLogs.Message = $"JobName:{context.JobDetail.JobDataMap["jobName"]},执行出现异常:{ex.Message}";
+                jobExecuteLogs.Message = $"JobName:{context.JobDetail.JobDataMap["jobName"]},执行出现异常:{ex.Message}。";
                 jobExecuteLogs.IsSuccess = false;
                 jobExecuteLogs.ExceptionMessage = GetAllExceptionInfo(ex);
             }
-
-            jobExecuteLogs.ExecuteInstanceIp = GetIp();
-            jobExecuteLogs.ExecuteInstanceName = context.Scheduler.SchedulerInstanceId;
-            jobExecuteLogs.CreationTime = DateTime.Now;
+            finally
+            {
+                var elapsed = _stopWatches[context.FireInstanceId].ElapsedMilliseconds;
+                jobExecuteLogs.ExecuteInstanceIp = GetIp();
+                jobExecuteLogs.ExecuteInstanceName = context.Scheduler.SchedulerInstanceId;
+                jobExecuteLogs.CreationTime = DateTime.Now;
+                jobExecuteLogs.Duration = elapsed;
+            }
 
             _jobMangerDal.InsertJobExecuteLogs(jobExecuteLogs);
-            if (!jobExecuteLogs.IsSuccess && !string.IsNullOrWhiteSpace(exceptionEmail))
+            if (!jobExecuteLogs.IsSuccess)
             {
-                SendExceptionEmail(exceptionEmail, jobExecuteLogs.Message + jobExecuteLogs.ExceptionMessage);
+                SendExceptionEmail(string.IsNullOrWhiteSpace(exceptionEmail) ? ApiJobSettings.ApiJobExceptionMailTo : exceptionEmail,
+                    jobExecuteLogs.Message + jobExecuteLogs.ExceptionMessage);
             }
 
             await Task.CompletedTask;
