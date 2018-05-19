@@ -62,17 +62,18 @@ namespace CockQuartz.Core.Infrastructure
                     throw new Exception($"未找到此Job，JobId{jobId}");
                 }
 
+                jobExecuteLogs.JobName = jobDetail.JobName;
+                jobExecuteLogs.JobGroupName = jobDetail.JobGroupName;
                 exceptionEmail = jobDetail.ExceptionEmail;
+                jobExecuteLogs.Message = $"JobName:{context.JobDetail.JobDataMap["jobName"]},执行结束。";
+                jobExecuteLogs.IsSuccess = true;
+
 
                 if (jobException != null)
                 {
                     throw jobException;
                 }
 
-                jobExecuteLogs.Message = $"JobName:{context.JobDetail.JobDataMap["jobName"]},执行结束。";
-                jobExecuteLogs.IsSuccess = true;
-                jobExecuteLogs.JobName = jobDetail.JobName;
-                jobExecuteLogs.JobGroupName = jobDetail.JobGroupName;
             }
             catch (Exception ex)
             {

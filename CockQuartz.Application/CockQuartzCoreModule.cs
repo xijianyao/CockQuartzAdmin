@@ -40,6 +40,7 @@ namespace CockQuartz.Core
             var types = ass.GetTypes();
 
             var jobList = _jobMangerDal.GetJobDetailsByGroupName(ApiJobSettings.ApiJobSystemName);
+            var newJobIdList = new List<int>();
 
             foreach (Type type in types)
             {
@@ -109,9 +110,18 @@ namespace CockQuartz.Core
                                     MethodsDic.Add(jobId, methodInfo);
                                 }
 
+                                newJobIdList.Add(jobId);
                             }
                         }
                     }
+                }
+            }
+
+            foreach (var job in jobList)
+            {
+                if (newJobIdList.All(x => x != job.Id))
+                {
+                    _jobMangerDal.DeleteJobDetail(job.Id);
                 }
             }
         }

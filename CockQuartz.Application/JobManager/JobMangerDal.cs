@@ -89,6 +89,13 @@ namespace CockQuartz.Core.JobManager
         {
             using (var dbExecuter = _dbExecutorFactory.CreateExecutor(_connectString))
             {
+                string isExistJobSql =
+                    @"select count(1) from [dbo].[JobDetail](nolock) where JobGroupName = @JobGroupName and JobName = @JobName and isdeleted = 0";
+                if (dbExecuter.Query<int>(isExistJobSql, jobDetail).First() > 0)
+                {
+                    throw new Exception("已经存在该job，无法添加");
+                }
+
                 string sql = @"
 INSERT INTO [dbo].[JobDetail]
            ([JobGroupName],[JobName],[TriggerName],[TriggerGroupName],[Cron],[Description],[CreateTime]
@@ -128,7 +135,7 @@ select @@identity
         {
             using (var dbExecuter = _dbExecutorFactory.CreateExecutor(_connectString))
             {
-                string sql = "select top 30 * from JobExecuteLogs where JobDetailId = @Id";
+                string sql = "select top 30 * from JobExecuteLogs(nolock) where JobDetailId = @Id";
                 return dbExecuter.Query<JobExecuteLogs>(sql, new { Id = id }).ToList();
             }
         }
