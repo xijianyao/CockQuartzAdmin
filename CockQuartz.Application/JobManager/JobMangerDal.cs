@@ -107,7 +107,7 @@ select @@identity
                 string sql = @"UPDATE [dbo].[JobDetail]
    SET [JobGroupName] = @JobGroupName,[JobName] = @JobName,[TriggerName] = @TriggerName,[TriggerGroupName] = @TriggerGroupName
       ,[Cron] = @Cron,[Description] = @Description,[CreateTime] = @CreateTime,[UpdateTime] = @UpdateTime,[CreateUser] = @CreateUser
-      ,[UpdateUser] = @UpdateUser,[InvocationData] = @InvocationData,[ExceptionEmail] = @ExceptionEmail,[IsDeleted] = @IsDeleted
+      ,[UpdateUser] = @UpdateUser,[ExceptionEmail] = @ExceptionEmail,[IsDeleted] = @IsDeleted
  WHERE Id = @Id";
                 dbExecuter.Execute(sql, jobDetail);
             }

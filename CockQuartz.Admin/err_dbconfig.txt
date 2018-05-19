@@ -1,0 +1,6 @@
+﻿2018/5/18 16:12:35 PostSend.errMessage = 请求被中止: 连接被意外关闭。 
+
+2018/5/18 16:12:35 err = 访问接口异常,WebRequest_Post,ex = 请求被中止: 连接被意外关闭。 
+
+2018/5/18 16:12:35 obj.ErrorMsg : url=http://192.168.1.229:8021/ConfigService/Config,key=Dev_GW_EhiJob,IP=fe80::3dbc:95fa:409d:d73f%11,192.168.5.138,,sysName=EhiJob,4.0error=访问接口异常,WebRequest_Post,ex = 请求被中止: 连接被意外关闭。 
+
