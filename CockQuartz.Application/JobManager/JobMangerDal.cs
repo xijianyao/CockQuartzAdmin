@@ -90,10 +90,10 @@ namespace CockQuartz.Core.JobManager
                 string sql = @"
 INSERT INTO [dbo].[JobDetail]
            ([JobGroupName],[JobName],[TriggerName],[TriggerGroupName],[Cron],[Description],[CreateTime]
-           ,[UpdateTime],[CreateUser],[UpdateUser],[InvocationData],[ExceptionEmail],[IsDeleted])
+           ,[UpdateTime],[CreateUser],[UpdateUser],[ExceptionEmail],[IsDeleted])
      VALUES
            (@JobGroupName,@JobName,@TriggerName,@TriggerGroupName,@Cron,@Description
-           ,@CreateTime,@UpdateTime,@CreateUser,@UpdateUser,@InvocationData,@ExceptionEmail,@IsDeleted) 
+           ,@CreateTime,@UpdateTime,@CreateUser,@UpdateUser,@ExceptionEmail,@IsDeleted) 
 select @@identity 
 ";
                 return dbExecuter.Query<int>(sql, jobDetail).First();
