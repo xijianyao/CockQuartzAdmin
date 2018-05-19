@@ -22,19 +22,15 @@ namespace CockQuartz.Core
         public CockQuartzCoreModule()
         {
             _jobMangerDal = new JobMangerDal();
-            ConfigQuartz();
+
+            var scheduler = SchedulerManager.Instance;
             ConfigJobs();
+            scheduler.Start();
         }
 
         public override void Initialize()
         {
 
-        }
-
-        private void ConfigQuartz()
-        {
-            var scheduler = SchedulerManager.Instance;
-            scheduler.Start();  
         }
 
         private void ConfigJobs()
@@ -90,11 +86,6 @@ namespace CockQuartz.Core
                                 var job = jobList.FirstOrDefault(x => x.JobName == apiJob.JobName
                                                                       && x.TriggerGroupName == apiJob.TriggerGroupName
                                                                       && x.TriggerName == apiJob.TriggerName);
-                                var jobInvocationType = new JobInvocationData
-                                {
-                                    Type = type.ToString(),
-                                    Method = methodInfo.ToString()
-                                };
                                 int jobId;
                                 if (job != null)
                                 {
@@ -134,26 +125,24 @@ namespace CockQuartz.Core
 
             var scheduler = SchedulerManager.Instance;
             JobKey jobKey = new JobKey(jobDetail.JobName, jobDetail.JobGroupName);
-            if (!scheduler.CheckExists(jobKey).Result)
-            {
-                IJobDetail job = JobBuilder.Create<JobBase>()
-                    .WithIdentity(jobKey)
-                    .WithDescription(jobDetail.Description)
-                    .Build();
 
-                JobDataMap map = job.JobDataMap;
-                map.Put("jobId", jobDetail.Id);
+            IJobDetail job = JobBuilder.Create<JobBase>()
+                .WithIdentity(jobKey)
+                .WithDescription(jobDetail.Description)
+                .Build();
 
-                CronScheduleBuilder scheduleBuilder = CronScheduleBuilder.CronSchedule(jobDetail.Cron);
-                ITrigger trigger = TriggerBuilder.Create().StartNow()//StartAt(DateTime.SpecifyKind(jobInfo.JobStartTime, DateTimeKind.Local))
-                    .WithIdentity(jobDetail.TriggerName, jobDetail.TriggerGroupName)
-                    .ForJob(jobKey)
-                    .WithSchedule(scheduleBuilder.WithMisfireHandlingInstructionDoNothing())
-                    .WithDescription(jobDetail.Description)
-                    .Build();
+            JobDataMap map = job.JobDataMap;
+            map.Put("jobId", jobDetail.Id);
 
-                scheduler.ScheduleJob(job, trigger);
-            }
+            CronScheduleBuilder scheduleBuilder = CronScheduleBuilder.CronSchedule(jobDetail.Cron);
+            ITrigger trigger = TriggerBuilder.Create().StartNow()//StartAt(DateTime.SpecifyKind(jobInfo.JobStartTime, DateTimeKind.Local))
+                .WithIdentity(jobDetail.TriggerName, jobDetail.TriggerGroupName)
+                .ForJob(jobKey)
+                .WithSchedule(scheduleBuilder.WithMisfireHandlingInstructionDoNothing())
+                .WithDescription(jobDetail.Description)
+                .Build();
+
+            scheduler.ScheduleJob(job, trigger);
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Specialized;
+using System.Threading.Tasks;
 using CockQuartz.Core.Infrastructure;
 using CockQuartz.Core.JobManager;
 using Quartz;
@@ -25,7 +26,7 @@ namespace CockQuartz.Core
                     {
                         if (_scheduler == null)
                         {
-                            _scheduler = GetScheduler();
+                            _scheduler = GetScheduler().Result;
                         }
                     }
                 }
@@ -33,7 +34,7 @@ namespace CockQuartz.Core
             }
         }
 
-        private static IScheduler GetScheduler()
+        private static async Task<IScheduler> GetScheduler()
         {
             try
             {
@@ -55,11 +56,10 @@ namespace CockQuartz.Core
                     { "quartz.dataSource.myDS.provider", "SqlServer" },
                     { "quartz.scheduler.instanceId", "AUTO" }
                 };
-                ISchedulerFactory schedulerFactory = new StdSchedulerFactory(props);
-                //ISchedulerFactory schedulerFactory = new StdSchedulerFactory();
-                var scheduler = schedulerFactory.GetScheduler().Result;
+                var schedulerFactory = new StdSchedulerFactory(props);
+                var scheduler = await schedulerFactory.GetScheduler();
+                await scheduler.Clear();
                 scheduler.ListenerManager.AddJobListener(new JobListener(), GroupMatcher<JobKey>.AnyGroup());
-                //scheduler.Start();
                 return scheduler;
             }
             catch (Exception e)
