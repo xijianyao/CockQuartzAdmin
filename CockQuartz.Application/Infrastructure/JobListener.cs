@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -11,6 +12,7 @@ using CockQuartz.Model;
 using eHi.Library.Dto;
 using eHi.Library.Interface;
 using eHi.Library.Service;
+using Nito.AsyncEx;
 using Quartz;
 
 namespace CockQuartz.Core.Infrastructure
@@ -47,7 +49,7 @@ namespace CockQuartz.Core.Infrastructure
                     JobDetailId = jobId,
                     JobName = jobDetail.JobName,
                     JobGroupName = jobDetail.JobGroupName,
-                    Message = $"JobName:{jobDetail.JobName},开始执行，执行中...",
+                    Message = $"Job:{jobDetail.JobName},正在执行中...",
                     ExecuteInstanceIp = GetIp(),
                     ExecuteInstanceName = context.Scheduler.SchedulerInstanceId,
                     CreationTime = DateTime.Now,
@@ -84,7 +86,7 @@ namespace CockQuartz.Core.Infrastructure
                 jobExecuteLogs.JobName = jobName;
                 jobExecuteLogs.JobGroupName = jobDetail.JobGroupName;
                 exceptionEmail = jobDetail.ExceptionEmail;
-                jobExecuteLogs.Message = $"JobName:{jobName},执行结束。";
+                jobExecuteLogs.Message = $"Job:{jobName},成功执行结束";
                 jobExecuteLogs.IsSuccess = true;
 
 
@@ -96,7 +98,7 @@ namespace CockQuartz.Core.Infrastructure
             }
             catch (Exception ex)
             {
-                jobExecuteLogs.Message = $"JobName:{jobName},执行出现异常:{ex.Message}。";
+                jobExecuteLogs.Message = $"Job:{jobName},执行出现异常:{ex.Message}";
                 jobExecuteLogs.IsSuccess = false;
                 jobExecuteLogs.ExceptionMessage = GetAllExceptionInfo(ex);
             }
@@ -112,8 +114,11 @@ namespace CockQuartz.Core.Infrastructure
             _jobMangerDal.UpdateJobExecuteLogs(jobExecuteLogs);
             if (!jobExecuteLogs.IsSuccess)
             {
-                SendExceptionEmail(string.IsNullOrWhiteSpace(exceptionEmail) ? ApiJobSettings.ApiJobExceptionMailTo : exceptionEmail,
-                    jobExecuteLogs.Message + jobExecuteLogs.ExceptionMessage);
+                Task.Run(() =>
+                {
+                    SendExceptionEmail(string.IsNullOrWhiteSpace(exceptionEmail) ? ApiJobSettings.ApiJobExceptionMailTo : exceptionEmail,
+                        jobExecuteLogs.Message + jobExecuteLogs.ExceptionMessage);
+                });
             }
 
             await Task.CompletedTask;
@@ -121,16 +126,29 @@ namespace CockQuartz.Core.Infrastructure
 
         private void SendExceptionEmail(string email, string exceptionMessage)
         {
-            _messageService.SendEmail(new EmailDto
+            if (string.IsNullOrWhiteSpace(email))
             {
-                SendTo = email,
-                EmailId = 300014,
-                OperatorId = "ApiJob",
-                Parameters = new Dictionary<string, string>
+                return;
+            }
+
+            var emailList = email.Split(';').ToList();
+            foreach (var item in emailList)
+            {
+                if (string.IsNullOrWhiteSpace(item))
+                {
+                    break;
+                }
+                _messageService.SendEmail(new EmailDto
+                {
+                    SendTo = item,
+                    EmailId = 300014,
+                    OperatorId = "ApiJob",
+                    Parameters = new Dictionary<string, string>
                     {
                         {"Content",exceptionMessage}
                     }
-            });
+                });
+            }
         }
 
         private string GetIp()

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Threading;
 using System.Web.Http;
 using System.Web.Services.Description;
 using CockQuartz.Core.Infrastructure;
@@ -42,6 +43,20 @@ namespace CockQuartz.Admin.Controllers
         public void SendRequest()
         {
             new ServiceClient().Request("http://www.baidu.com", HttpVerb.Get, new { });
+            Console.WriteLine("111");
+        }
+
+        //[Route("SendRequest1")]
+        [ApiJob(
+            ApiJobName = "睡眠十秒",
+            ApiJobDeveloper = "xijianyao",
+            ApiJobDeveloperMail = "jianyao.xi@1hai.cn",
+            ApiJobDescription = "睡眠十秒"
+        )]
+        public void SendRequest1()
+        {
+            new ServiceClient().Request("http://www.baidu.com", HttpVerb.Get, new { });
+            Thread.Sleep(10000);
             Console.WriteLine("111");
         }
 
