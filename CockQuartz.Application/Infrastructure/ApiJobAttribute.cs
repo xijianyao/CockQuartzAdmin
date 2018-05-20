@@ -18,7 +18,7 @@ namespace CockQuartz.Core.Infrastructure
         /// </summary>
         /// <param name="apiJobName">Job名字</param>
         /// <param name="apiJobDeveloper">开发者</param>
-        /// <param name="apiJobDeveloperMail">Job错误发送Email地址</param>
+        /// <param name="apiJobDeveloperMail">Job错误发送Email地址,多个地址以;分隔</param>
         /// <param name="apiJobDescription">Job描述</param>
         public ApiJobAttribute(string apiJobName, string apiJobDeveloper, string apiJobDeveloperMail, string apiJobDescription)
         {
@@ -39,7 +39,7 @@ namespace CockQuartz.Core.Infrastructure
         public string ApiJobDeveloper { get; set; }
 
         /// <summary>
-        /// Job错误发送Email地址
+        /// Job错误发送Email地址,多个地址以;分隔
         /// </summary>
         public string ApiJobDeveloperMail { get; set; }
 
