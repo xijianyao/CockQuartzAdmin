@@ -7,6 +7,11 @@ namespace CockQuartz.Model
     [Table("JobExecuteLogs")]
     public class JobExecuteLogs
     {
+        /// <summary>
+        /// 主键id
+        /// </summary>
+        public int Id { get; set; }
+
         [Index("INDEX_REGNUM")]
         public int JobDetailId { get; set; }
 

@@ -156,6 +156,29 @@ select @@identity ";
 
         }
 
+        public void UpdateJobExecuteLogs(JobExecuteLogs jobExecuteLogs)
+        {
+            using (var dbExecuter = _dbExecutorFactory.CreateExecutor(_connectString))
+            {
+                string sql = @"
+UPDATE [dbo].[JobExecuteLogs]
+   SET [JobDetailId] = @JobDetailId
+      ,[JobGroupName] = @JobGroupName
+      ,[JobName] = @JobName
+      ,[IsSuccess] = @IsSuccess
+      ,[ExecuteInstanceName] = @ExecuteInstanceName
+      ,[ExecuteInstanceIp] = @ExecuteInstanceIp
+      ,[Message] = @Message
+      ,[ExceptionMessage] = @ExceptionMessage
+      ,[CreationTime] = @CreationTime
+      ,[Duration] = @Duration
+ WHERE Id = @Id
+";
+                dbExecuter.Execute(sql, jobExecuteLogs);
+            }
+
+        }
+
 
         public List<QRTZ_SCHEDULER_STATE> GetSchedulerState(string schedName)
         {

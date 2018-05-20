@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Linq.Expressions;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -41,17 +39,37 @@ namespace CockQuartz.Core.Infrastructure
             stopwatch.Start();
             _stopWatches.Add(context.FireInstanceId, stopwatch);
 
+            var jobId = int.Parse(context.JobDetail.JobDataMap["jobId"].ToString());
+            var jobDetail = _jobMangerDal.GetJobDetailsById(jobId);
+            var jobExecuteLogs =
+                new JobExecuteLogs
+                {
+                    JobDetailId = jobId,
+                    JobName = jobDetail.JobName,
+                    JobGroupName = jobDetail.JobGroupName,
+                    Message = $"JobName:{jobDetail.JobName},开始执行，执行中...",
+                    ExecuteInstanceIp = GetIp(),
+                    ExecuteInstanceName = context.Scheduler.SchedulerInstanceId,
+                    CreationTime = DateTime.Now,
+                    IsSuccess = false
+                };
+            var jobLogId = _jobMangerDal.InsertJobExecuteLogs(jobExecuteLogs);
+            context.JobDetail.JobDataMap.Put("jobLogId", jobLogId);
+
             await Task.CompletedTask;
         }
 
         public async Task JobWasExecuted(IJobExecutionContext context, JobExecutionException jobException, CancellationToken cancellationToken = default(CancellationToken))
         {
             var jobId = int.Parse(context.JobDetail.JobDataMap["jobId"].ToString());
+            var jobLogId = int.Parse(context.JobDetail.JobDataMap["jobLogId"].ToString());
             var jobExecuteLogs =
                 new JobExecuteLogs
                 {
+                    Id = jobLogId,
                     JobDetailId = jobId
                 };
+            var jobName = string.Empty;
 
             var exceptionEmail = string.Empty;
             try
@@ -61,11 +79,12 @@ namespace CockQuartz.Core.Infrastructure
                 {
                     throw new Exception($"未找到此Job，JobId{jobId}");
                 }
+                jobName = jobDetail.JobName;
 
-                jobExecuteLogs.JobName = jobDetail.JobName;
+                jobExecuteLogs.JobName = jobName;
                 jobExecuteLogs.JobGroupName = jobDetail.JobGroupName;
                 exceptionEmail = jobDetail.ExceptionEmail;
-                jobExecuteLogs.Message = $"JobName:{context.JobDetail.JobDataMap["jobName"]},执行结束。";
+                jobExecuteLogs.Message = $"JobName:{jobName},执行结束。";
                 jobExecuteLogs.IsSuccess = true;
 
 
@@ -77,7 +96,7 @@ namespace CockQuartz.Core.Infrastructure
             }
             catch (Exception ex)
             {
-                jobExecuteLogs.Message = $"JobName:{context.JobDetail.JobDataMap["jobName"]},执行出现异常:{ex.Message}。";
+                jobExecuteLogs.Message = $"JobName:{jobName},执行出现异常:{ex.Message}。";
                 jobExecuteLogs.IsSuccess = false;
                 jobExecuteLogs.ExceptionMessage = GetAllExceptionInfo(ex);
             }
@@ -90,7 +109,7 @@ namespace CockQuartz.Core.Infrastructure
                 jobExecuteLogs.Duration = elapsed;
             }
 
-            _jobMangerDal.InsertJobExecuteLogs(jobExecuteLogs);
+            _jobMangerDal.UpdateJobExecuteLogs(jobExecuteLogs);
             if (!jobExecuteLogs.IsSuccess)
             {
                 SendExceptionEmail(string.IsNullOrWhiteSpace(exceptionEmail) ? ApiJobSettings.ApiJobExceptionMailTo : exceptionEmail,
