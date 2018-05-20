@@ -32,8 +32,6 @@ namespace CockQuartz.Core.Dto
 
         public string UpdateUser { get; set; }
 
-        public string RequestUrl { get; set; }
-
         public string ExceptionEmail { get; set; }
 
         public bool IsInSchedule { get; set; }

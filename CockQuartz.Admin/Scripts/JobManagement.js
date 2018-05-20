@@ -14,6 +14,10 @@ $(function () {
     $(".btnRun").on("click", function (e) {
         e.preventDefault();
         var $this = $(this);
+        if ($this.parent().parent().parent().parent().attr("data-corn") === "") {
+            alert("Corn表达式填写后才能运行");
+            return;
+        }
         loadingFunction();
         $.ajax({
             url: url.btnRun,
@@ -41,7 +45,7 @@ $(function () {
                 alert(data.message);
                 freshwindow();
                 removeLoading();
-            }, error: function () { removeLoading();}
+            }, error: function () { removeLoading(); }
         });
     });
 
@@ -90,8 +94,9 @@ $(function () {
                     alert(data.message);
                     freshwindow();
                     removeLoading();
-                }, error: function () { removeLoading(); }
-            })
+                },
+                error: function () { removeLoading(); }
+            });
         });
     });
 
@@ -133,7 +138,7 @@ $(function () {
                         alert(data.message);
                         freshwindow();
                         removeLoading();
-                    },error: function () { removeLoading(); }
+                    }, error: function () { removeLoading(); }
                 });
             }, function () { }, " <textarea type='text' class='form-control' rows='4' placeholder='请输入邮箱地址' id='editexceptionEmail'/></textarea>");
 
@@ -190,7 +195,7 @@ var PageInitialise = function PageInitialise() {
     Page.Initialise("J_PagesPanel", pageCount, 1, url.jobList, param, "divlist");
 }
 function freshwindow() {
-    var pageIndex = $("#J_PagesPanel").children("div").children(".laypage_current").eq(0).text()||1;
+    var pageIndex = $("#J_PagesPanel").children("div").children(".laypage_current").eq(0).text() || 1;
     var param = { "groupName": $("#JobGroupName").val() };
     Requests.Post(url.jobList, JSON.stringify(param), function (data) {
         $("#divlist").html(data);

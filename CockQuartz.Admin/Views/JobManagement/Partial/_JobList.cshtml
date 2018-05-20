@@ -31,7 +31,7 @@
                 ExceptionEmail
             </th>
             <th>
-                RequestUrl
+                描述
             </th>
             <th>
                 操作
@@ -66,10 +66,10 @@
                         @item.ExceptionEmail
                     </td>
                     <td>
-                        @item.RequestUrl
+                        @item.Description
                     </td>
-                    <td data-jobId='@item.Id.ToString()'>
-                       
+                    <td data-jobId='@item.Id.ToString()' data-corn='@item.Cron'>
+
                         <div class="dropdown">
                             <button class="btn btn-hollow btn-hollow-info dropdown-toggle" type="button" aria-expanded="false">
                                 更多
@@ -77,14 +77,14 @@
                             </button>
                             <ul class="dropdown-menu">
                                 <li>
-                                    <a class="btnEdit" href="">修改计划</a> 
+                                    <a class="btnEdit" href="">修改计划</a>
                                 </li>
                                 <li>
                                     <a class="btnEditExceptionEmail" href="">修改ExceptionEmail</a>
                                 </li>
-                                <li>
-                                    <a class="btnEditRequestUrl" href="">修改RequestUrl</a>
-                                </li>
+                                @*<li>
+                                        <a class="btnEditRequestUrl" href="">修改RequestUrl</a>
+                                    </li>*@
                                 @if (!item.IsInSchedule)
                                 {
                                     <li>
@@ -118,7 +118,7 @@
                                 }
                             </ul>
                         </div>
-                        
+
                     </td>
                 </tr>
             }
@@ -127,5 +127,5 @@
 
     </tbody>
 </table>
-<input type="hidden" id="pageCount" value="@pageCount"/>
+<input type="hidden" id="pageCount" value="@pageCount" />
 @Html.Partial("~/Views/Shared/_Page.cshtml")

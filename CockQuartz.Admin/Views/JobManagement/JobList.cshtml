@@ -30,7 +30,7 @@
     @Html.Partial("Partial/_JobList", Model)
 </div>
 <div class="pull-left">
-    <input type="button" id="btnAddJob" value="添加Job" class="btn btn-primary" />
+    @*<input type="button" id="btnAddJob" value="添加Job" class="btn btn-primary" />*@
 </div>
 <script>
     url = {
@@ -41,8 +41,8 @@
         btnDelete: "@Url.Action("DeleteJob", "JobManagement")",
         btnEdit: "@Url.Action("ModifyJobCron", "JobManagement")",
         btnEditExceptionEmail: "@Url.Action("ModifyExceptionEmail", "JobManagement")",
-        btnEditRequestUrl: "@Url.Action("ModifyRequestUrl", "JobManagement")",
-        btnAddJob: "@Url.Action("CreateJob", "JobManagement")",
+        @*btnEditRequestUrl: "@Url.Action("ModifyRequestUrl", "JobManagement")",
+        btnAddJob: "@Url.Action("CreateJob", "JobManagement")",*@
         jobList: "@Url.Action("JobList", "JobManagement")"
     }
 </script>

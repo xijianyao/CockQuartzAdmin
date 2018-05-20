@@ -77,11 +77,13 @@ namespace CockQuartz.Core
                             {
                                 var apiJob = new JobDetail
                                 {
-                                    JobName = member.Name,
+                                    JobName = member.ApiJobName,
                                     JobGroupName = ApiJobSettings.ApiJobSystemName,
-                                    TriggerGroupName = ApiJobSettings.ApiJobSystemName + member.Name + "TriggerGroup",
-                                    TriggerName = ApiJobSettings.ApiJobSystemName + member.Name + "Trigger",
-                                    CreateUser = member.ApiJobDeveloper
+                                    TriggerGroupName = ApiJobSettings.ApiJobSystemName + member.ApiJobName + "TriggerGroup",
+                                    TriggerName = ApiJobSettings.ApiJobSystemName + member.ApiJobName + "Trigger",
+                                    CreateUser = member.ApiJobDeveloper,
+                                    ExceptionEmail = member.ApiJobDeveloperMail,
+                                    Description = member.ApiJobDescription
                                 };
 
                                 var job = jobList.FirstOrDefault(x => x.JobName == apiJob.JobName

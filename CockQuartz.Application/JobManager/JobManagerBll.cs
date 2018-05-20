@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Configuration;
-using System.Data.Entity;
 using System.Linq;
 using CockQuartz.Core.Dto;
 using CockQuartz.Core.Infrastructure;
 using CockQuartz.Model;
 using eHi.Common.Dto.Paged;
-using FeI.Domain.Repositories;
 using Quartz;
 using Quartz.Impl.Matchers;
 
@@ -78,7 +75,7 @@ namespace CockQuartz.Core.JobManager
                             continue;
                         }//
                         jobViewModel.Cron = jobInfo.Cron;
-                        //jobViewModel.RequestUrl = jobInfo.RequestUrl;
+                        jobViewModel.Description = jobInfo.Description;
                         jobViewModel.ExceptionEmail = jobInfo.ExceptionEmail;
                         jobViewModel.Id = jobInfo.Id;
                         jobViewModel.IsInSchedule = true;
@@ -112,7 +109,7 @@ namespace CockQuartz.Core.JobManager
                     jobViewModel.Cron = item.Cron;
                     jobViewModel.Id = item.Id;
                     jobViewModel.IsInSchedule = false;
-                    //jobViewModel.RequestUrl = item.RequestUrl;
+                    jobViewModel.Description = item.Description;
                     jobViewModel.ExceptionEmail = item.ExceptionEmail;
                     result.Add(jobViewModel);
                 }

@@ -19,8 +19,13 @@ namespace CockQuartz.Admin.Controllers
             _serviceClient = new ServiceClient();
         }
 
-        [Route("CheckUserUserSummaryError")]
-        [ApiJob(name: "CheckUserUserSummaryError", apiJobDeveloper: "xijianyao ")]
+        [Route("CheckUserSummaryError")]
+        [ApiJob(
+            ApiJobName = "检查用户Summary",
+            ApiJobDeveloper = "xijianyao",
+            ApiJobDeveloperMail = "jianyao.xi@1hai.cn",
+            ApiJobDescription = "检查用户Summary描述"
+            )]
         public void Get()
         {
             var a = _jobMangerDal.GetJobDetails();
@@ -28,18 +33,15 @@ namespace CockQuartz.Admin.Controllers
         }
 
         [Route("SendRequest")]
-        [ApiJob(name: "SendRequest", apiJobDeveloper: "xijianyao1")]
+        [ApiJob(
+            ApiJobName = "请求百度接口",
+            ApiJobDeveloper = "xijianyao",
+            ApiJobDeveloperMail = "jianyao.xi@1hai.cn",
+            ApiJobDescription = "请求百度接口描述"
+        )]
         public void SendRequest()
         {
             new ServiceClient().Request("http://www.baidu.com", HttpVerb.Get, new { });
-            Console.WriteLine("111");
-        }
-
-        [Route("SendRequestError")]
-        [ApiJob(name: "SendRequestError", apiJobDeveloper: "xijianyao1")]
-        public void SendRequest1()
-        {
-            _serviceClient.Request("http://www.baidu.com", HttpVerb.Get, new { });
             Console.WriteLine("111");
         }
 

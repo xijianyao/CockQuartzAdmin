@@ -20,7 +20,6 @@ namespace CockQuartz.Admin.Controllers
         [HttpGet]
         public ActionResult JobList()
         {
-
             var groupName = ApiJobSettings.ApiJobSystemName;
             var result = _jobService.GetJobList(1, groupName);
             var instances = _jobService.GetQuartzInstances();
@@ -43,12 +42,12 @@ namespace CockQuartz.Admin.Controllers
             return View(result);
         }
 
-        [HttpPost]
-        public JsonResult CreateJob(JobDetail job)
-        {
-            _jobService.CreateJob(job);
-            return Json(true);
-        }
+        //[HttpPost]
+        //public JsonResult CreateJob(JobDetail job)
+        //{
+        //    _jobService.CreateJob(job);
+        //    return Json(true);
+        //}
 
         [HttpPost]
         public JsonResult RunJob(int id)
@@ -99,11 +98,11 @@ namespace CockQuartz.Admin.Controllers
             return Json(new { success = true, message = "成功" });
         }
 
-        [HttpPost]
-        public JsonResult ModifyRequestUrl(int id, string requestUrl)
-        {
-            _jobService.ModifyRequestUrl(id, requestUrl);
-            return Json(new { success = true, message = "成功" });
-        }
+        //[HttpPost]
+        //public JsonResult ModifyRequestUrl(int id, string requestUrl)
+        //{
+        //    _jobService.ModifyRequestUrl(id, requestUrl);
+        //    return Json(new { success = true, message = "成功" });
+        //}
     }
 }
