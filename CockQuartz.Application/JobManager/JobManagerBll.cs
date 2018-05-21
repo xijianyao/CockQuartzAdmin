@@ -38,11 +38,16 @@ namespace CockQuartz.Core.JobManager
                 return null;
             }
 
-            var jobList = _jobMangerDal.GetJobDetails();
+            List<JobDetail> jobList;
             if (!string.IsNullOrEmpty(groupNames))
             {
-                jobList = jobList.Where(x => x.JobGroupName == groupNames).ToList();
+                jobList = _jobMangerDal.GetJobDetailsByGroupName(groupNames);
             }
+            else
+            {
+                jobList = _jobMangerDal.GetJobDetails();
+            }
+
             var totalCount = jobList.Count;
 
             var result = new List<JobDetailOutputDto>();
