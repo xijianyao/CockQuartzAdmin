@@ -114,11 +114,13 @@ namespace CockQuartz.Core.Infrastructure
             _jobMangerDal.UpdateJobExecuteLogs(jobExecuteLogs);
             if (!jobExecuteLogs.IsSuccess)
             {
+#pragma warning disable CS4014 // 由于此调用不会等待，因此在此调用完成之前将会继续执行当前方法。请考虑将 "await" 运算符应用于调用结果。
                 Task.Run(() =>
                 {
                     SendExceptionEmail(string.IsNullOrWhiteSpace(exceptionEmail) ? ApiJobSettings.ApiJobExceptionMailTo : exceptionEmail,
                         jobExecuteLogs.Message + jobExecuteLogs.ExceptionMessage);
                 });
+#pragma warning restore CS4014 // 由于此调用不会等待，因此在此调用完成之前将会继续执行当前方法。请考虑将 "await" 运算符应用于调用结果。
             }
 
             await Task.CompletedTask;

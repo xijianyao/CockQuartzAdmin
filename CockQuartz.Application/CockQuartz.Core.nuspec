@@ -1,17 +1,17 @@
 <?xml version="1.0"?>
 <package >
   <metadata>
-    <id>1</id>
+    <id>CockQuartzCore</id>
     <version>1.0</version>
     <title>CockQuartzCore</title>
     <authors>xijianyao</authors>
     <owners>ehi</owners>
-    <licenseUrl>http://LICENSE_URL_HERE_OR_DELETE_THIS_LINE</licenseUrl>
-    <projectUrl>http://PROJECT_URL_HERE_OR_DELETE_THIS_LINE</projectUrl>
-    <iconUrl>http://ICON_URL_HERE_OR_DELETE_THIS_LINE</iconUrl>
+    <licenseUrl></licenseUrl>
+    <projectUrl></projectUrl>
+    <iconUrl></iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>ehiJob新框架</description>
-    <releaseNotes>ehiJob新框架</releaseNotes>
+    <description>ehiJob框架</description>
+    <releaseNotes>ehiJob框架</releaseNotes>
     <copyright>Copyright 2018</copyright>
     <tags>Tag1 Tag2</tags>
   </metadata>

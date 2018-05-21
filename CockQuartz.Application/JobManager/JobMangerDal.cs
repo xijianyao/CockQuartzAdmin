@@ -135,7 +135,7 @@ select @@identity
         {
             using (var dbExecuter = _dbExecutorFactory.CreateExecutor(_connectString))
             {
-                string sql = "select top 30 * from JobExecuteLogs(nolock) where JobDetailId = @Id";
+                string sql = "select top 30 * from JobExecuteLogs(nolock) where JobDetailId = @Id order by id desc";
                 return dbExecuter.Query<JobExecuteLogs>(sql, new { Id = id }).ToList();
             }
         }
