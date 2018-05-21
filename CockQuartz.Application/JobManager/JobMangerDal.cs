@@ -35,14 +35,14 @@ namespace CockQuartz.Core.JobManager
 
         public static string GetConString()
         {
-            //string con = "";
-            //string errorMsg = "";
-            //DBInfo dbInfo = DBConfig.GetConfig(GetDbConfigUrl(), ConfigKey, "EhiJob", out errorMsg);
-            //if (dbInfo != null)
-            //    con = "Data Source=" + dbInfo.ServerName + ";Initial Catalog=" + dbInfo.DbName + ";User ID=" + dbInfo.LoginName + ";Password=" + dbInfo.LoginPwd + ";Connect Timeout=300000";
-            //return con;
+            string con = "";
+            string errorMsg = "";
+            DBInfo dbInfo = DBConfig.GetConfig(GetDbConfigUrl(), ConfigKey, "EhiJob", out errorMsg);
+            if (dbInfo != null)
+                con = "Data Source=" + dbInfo.ServerName + ";Initial Catalog=" + dbInfo.DbName + ";User ID=" + dbInfo.LoginName + ";Password=" + dbInfo.LoginPwd + ";Connect Timeout=300000";
+            return con;
 
-            return "Data Source=192.168.9.51;Initial Catalog=EhiJob;User ID=Dev_GW_FB;Password=rIbfWhMVQo$Z+II1TIHJ;Connect Timeout=300000";
+            //return "Data Source=192.168.9.51;Initial Catalog=EhiJob;User ID=Dev_GW_FB;Password=rIbfWhMVQo$Z+II1TIHJ;Connect Timeout=300000";
         }
         #endregion
 
