@@ -9,8 +9,7 @@ namespace CockQuartz.Admin
         public void Configuration(IAppBuilder app)
         {
             //设置启动模块
-            app.UseFeI<CockQuartzAdminModule>();
-            var cockQuartzCoreModule = new CockQuartzCoreModule();
+            app.UseFeI<CockQuartzAdminModule>().Use<CockQuartzCoreModule>(null);
         }
     }
 }

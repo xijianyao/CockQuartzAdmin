@@ -255,15 +255,22 @@
     <Compile Include="JobBase.cs" />
     <Compile Include="Dto\JobDetailOutputDto.cs" />
     <Compile Include="JobManager\JobManagerBll.cs" />
+    <Compile Include="Models\JobDetail.cs" />
+    <Compile Include="Models\JobExecuteLogs.cs" />
+    <Compile Include="Models\QRTZ_BLOB_TRIGGERS.cs" />
+    <Compile Include="Models\QRTZ_CALENDARS.cs" />
+    <Compile Include="Models\QRTZ_CRON_TRIGGERS.cs" />
+    <Compile Include="Models\QRTZ_FIRED_TRIGGERS.cs" />
+    <Compile Include="Models\QRTZ_JOB_DETAILS.cs" />
+    <Compile Include="Models\QRTZ_LOCKS.cs" />
+    <Compile Include="Models\QRTZ_PAUSED_TRIGGER_GRPS.cs" />
+    <Compile Include="Models\QRTZ_SCHEDULER_STATE.cs" />
+    <Compile Include="Models\QRTZ_SIMPLE_TRIGGERS.cs" />
+    <Compile Include="Models\QRTZ_SIMPROP_TRIGGERS.cs" />
+    <Compile Include="Models\QRTZ_TRIGGERS.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Dto\QuartzInstanceOutputDto.cs" />
     <Compile Include="SchedulerManager.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\CockQuartz.Model\CockQuartz.Model.csproj">
-      <Project>{1dc679bf-7df2-4757-a6f5-0d0925a02ede}</Project>
-      <Name>CockQuartz.Model</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

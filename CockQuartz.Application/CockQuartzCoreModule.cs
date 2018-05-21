@@ -5,7 +5,7 @@ using System.Linq;
 using System.Reflection;
 using CockQuartz.Core.Infrastructure;
 using CockQuartz.Core.JobManager;
-using CockQuartz.Model;
+using CockQuartz.Core.Models;
 using Newtonsoft.Json;
 using Quartz;
 using Quartz.Impl;

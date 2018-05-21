@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
-using CockQuartz.Model;
+using CockQuartz.Core.Models;
 using DapperWrapper;
 using EHiDBConfigNew.EhiConfig;
 

@@ -396,10 +396,6 @@
       <Project>{5d7651b1-9ee8-4ece-91fd-9f90eb8e6cb4}</Project>
       <Name>CockQuartz.Core</Name>
     </ProjectReference>
-    <ProjectReference Include="..\CockQuartz.Model\CockQuartz.Model.csproj">
-      <Project>{1dc679bf-7df2-4757-a6f5-0d0925a02ede}</Project>
-      <Name>CockQuartz.Model</Name>
-    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

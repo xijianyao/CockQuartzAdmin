@@ -2,7 +2,6 @@
 using CockQuartz.Core;
 using CockQuartz.Core.Infrastructure;
 using CockQuartz.Core.JobManager;
-using CockQuartz.Model;
 using eHi.Library.Common;
 using FeI.Dependency;
 

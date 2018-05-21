@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using CockQuartz.Core.Dto;
 using CockQuartz.Core.Infrastructure;
-using CockQuartz.Model;
+using CockQuartz.Core.Models;
 using eHi.Common.Dto.Paged;
 using Quartz;
 using Quartz.Impl.Matchers;

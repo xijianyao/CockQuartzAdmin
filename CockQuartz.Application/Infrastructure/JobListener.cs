@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using CockQuartz.Core.JobManager;
-using CockQuartz.Model;
+using CockQuartz.Core.Models;
 using eHi.Library.Dto;
 using eHi.Library.Interface;
 using eHi.Library.Service;
