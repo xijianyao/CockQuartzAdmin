@@ -235,14 +235,8 @@ withMisfireHandlingInstructionFireAndProceed
         public bool StartJob(int id)
         {
             var jobInfo = _jobMangerDal.GetJobDetailsById(id);
-
-            CronScheduleBuilder scheduleBuilder = CronScheduleBuilder.CronSchedule(jobInfo.Cron);
-            var triggerKey = CreateTriggerKey(jobInfo.TriggerName, jobInfo.TriggerGroupName);
-            ITrigger trigger = TriggerBuilder.Create().StartNow()
-                .WithIdentity(jobInfo.TriggerName, jobInfo.TriggerGroupName)
-                .WithSchedule(scheduleBuilder.WithMisfireHandlingInstructionFireAndProceed())
-                .Build();
-            _scheduler.RescheduleJob(triggerKey, trigger);
+            JobKey jobKey = CreateJobKey(jobInfo.JobName, jobInfo.JobGroupName);
+            _scheduler.TriggerJob(jobKey);
             return true;
         }
 
