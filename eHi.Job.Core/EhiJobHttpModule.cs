@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 using System.Web;
 using eHi.Job.Core.Infrastructure;
 
@@ -42,9 +43,6 @@ namespace eHi.Job.Core
 
         }
 
-
-        public bool IsTrue = false;//是否阻止webapi请求
-
         /// <summary>
         /// 请求事件
         /// </summary>
@@ -59,10 +57,12 @@ namespace eHi.Job.Core
 
                 var webUrl = application.Context.Request.Url.ToString();
 
-                if (!webUrl.ToLower().Contains("jobmanagement") || !webUrl.ToLower().Contains("home/index"))
+                if (!webUrl.ToLower().Contains("jobmanagement") && !webUrl.ToLower().Contains("home/index"))
                 {
-                    IsTrue = true;
                     application.CompleteRequest();
+                    application.Context.Response.Charset = "utf-8";
+                    application.Context.Response.ContentEncoding = Encoding.UTF8;
+                    application.Context.Response.ContentType = "application/xml";
                     application.Context.Response.Write("请求被终止。");
                 }
             }

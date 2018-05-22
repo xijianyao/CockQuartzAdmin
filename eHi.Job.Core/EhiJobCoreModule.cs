@@ -17,11 +17,10 @@ namespace eHi.Job.Core
 
         public EhiJobCoreModule()
         {
+            _jobMangerDal = new JobMangerDal();
+            var scheduler = SchedulerManager.Instance;
             if (ApiJobSettings.ApiJobSchedulerEnabled)
             {
-                _jobMangerDal = new JobMangerDal();
-
-                var scheduler = SchedulerManager.Instance;
                 ConfigJobs();
                 scheduler.Start();
             }

@@ -9,11 +9,12 @@ using eHi.Library.Interface;
 using eHi.Library.Service;
 using FeI.Dependency;
 using FeI.Modules;
+using FeI.Web.Api;
 using Module = FeI.Modules.Module;
 
 namespace eHi.Job.Admin
 {
-    [DependsOn(typeof(AdminModule), typeof(EhiJobCoreModule), typeof(ApiModule))]
+    [DependsOn(typeof(AdminModule), typeof(WebApiModule), typeof(EhiJobCoreModule), typeof(ApiModule))]
     public class EhiJobAdminModule : Module
     {
         public override void PreInitialize()

@@ -8,6 +8,7 @@ using ServiceClients;
 
 namespace eHi.Job.Admin.Controllers
 {
+    [RoutePrefix("Security")]
     public class TestController : ApiController
     {
         private readonly JobMangerDal _jobMangerDal;
@@ -20,6 +21,7 @@ namespace eHi.Job.Admin.Controllers
         }
 
         [Route("CheckUserSummaryError")]
+        [HttpGet]
         [ApiJob(
             ApiJobName = "检查用户Summary",
             ApiJobDeveloper = "xijianyao",
@@ -33,6 +35,7 @@ namespace eHi.Job.Admin.Controllers
         }
 
         [Route("SendRequest")]
+        [HttpGet]
         [ApiJob(
             ApiJobName = "请求百度接口",
             ApiJobDeveloper = "xijianyao",
