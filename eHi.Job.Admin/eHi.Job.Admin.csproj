@@ -392,7 +392,7 @@
     <Folder Include="Models\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\CockQuartz.Application\eHi.Job.Core.csproj">
+    <ProjectReference Include="..\eHi.Job.Core\eHi.Job.Core.csproj">
       <Project>{5d7651b1-9ee8-4ece-91fd-9f90eb8e6cb4}</Project>
       <Name>eHi.Job.Core</Name>
     </ProjectReference>
