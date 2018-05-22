@@ -246,6 +246,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ApiJobModule.cs" />
     <Compile Include="JobManager\JobMangerDal.cs" />
     <Compile Include="Infrastructure\ApiJobAttribute.cs" />
     <Compile Include="CockQuartzCoreModule.cs" />

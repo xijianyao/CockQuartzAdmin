@@ -21,11 +21,14 @@ namespace CockQuartz.Core
 
         public CockQuartzCoreModule()
         {
-            _jobMangerDal = new JobMangerDal();
+            if (ApiJobSettings.ApiJobSchedulerEnabled)
+            {
+                _jobMangerDal = new JobMangerDal();
 
-            var scheduler = SchedulerManager.Instance;
-            ConfigJobs();
-            scheduler.Start();
+                var scheduler = SchedulerManager.Instance;
+                ConfigJobs();
+                scheduler.Start();
+            }
         }
 
         public override void Initialize()

@@ -24,6 +24,23 @@ namespace CockQuartz.Core.Infrastructure
         public static string ApiJobSystemName => System.Configuration.ConfigurationManager.AppSettings["ApiJobSystemName"];
 
         /// <summary>
+        /// 是否启动Job，0不启动，1启动Job阻止webapi请求（除Jobmanagement和home控制器外），
+        /// </summary>
+        public static bool ApiJobSchedulerEnabled
+        {
+            get
+            {
+                string value = System.Configuration.ConfigurationManager.AppSettings["ApiJobSchedulerEnabled"];
+                if (!string.IsNullOrEmpty(value) && (value.Trim() == "1" || value.ToLower().Trim() == "true"))
+                {
+                    return true;
+                }
+                return false;
+            }
+        }
+
+
+        /// <summary>
         /// Job运行错误,邮件通知
         /// </summary>
         internal static string ApiJobExceptionMailTo
