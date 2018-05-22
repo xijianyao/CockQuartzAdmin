@@ -57,7 +57,7 @@ namespace CockQuartz.Core.JobManager
             List<JobDetail> result;
             using (var dbExecuter = _dbExecutorFactory.CreateExecutor(_connectString))
             {
-                string sql = "select * from jobdetail where isdeleted = 0";
+                string sql = "select * from jobdetail where isdeleted = 0 order by id desc";
                 result = dbExecuter.Query<JobDetail>(sql).ToList();
             }
             return result;
@@ -68,7 +68,7 @@ namespace CockQuartz.Core.JobManager
             List<JobDetail> result;
             using (var dbExecuter = _dbExecutorFactory.CreateExecutor(_connectString))
             {
-                string sql = "select * from jobdetail where JobGroupName = @GroupName and isdeleted = 0";
+                string sql = "select * from jobdetail where JobGroupName = @GroupName and isdeleted = 0 order by id desc";
                 result = dbExecuter.Query<JobDetail>(sql, new { GroupName = groupName }).ToList();
             }
             return result;
