@@ -7,6 +7,8 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using eHi.Common.Exception;
+using eHi.Job.Core.Dto;
 using eHi.Job.Core.JobManager;
 using eHi.Job.Core.Models;
 using eHi.Library.Dto;
@@ -42,6 +44,37 @@ namespace eHi.Job.Core.Infrastructure
 
             var jobId = int.Parse(context.JobDetail.JobDataMap["jobId"].ToString());
             var jobDetail = _jobMangerDal.GetJobDetailsById(jobId);
+
+            if (jobDetail.ExecuteStatus == ExecuteStatusType.Executing)
+            {
+                //添加日志
+                var jobExecuteLogsExecuting =
+                    new JobExecuteLogs
+                    {
+                        JobDetailId = jobId,
+                        JobName = jobDetail.JobName,
+                        JobGroupName = jobDetail.JobGroupName,
+                        Message = $"Job：{jobDetail.JobGroupName}_{jobDetail.JobName}正在运行中，启动失败",
+                        ExecuteInstanceIp = GetIp(),
+                        ExecuteInstanceName = context.Scheduler.SchedulerInstanceId,
+                        CreationTime = DateTime.Now,
+                        IsSuccess = false
+                    };
+                var jobExecutingLogId = _jobMangerDal.InsertJobExecuteLogs(jobExecuteLogsExecuting);
+                context.JobDetail.JobDataMap.Put("jobLogId", jobExecutingLogId);
+                Task.Run(() =>
+                {
+                    SendExceptionEmail(string.IsNullOrWhiteSpace(jobDetail.ExceptionEmail) ? ApiJobSettings.ApiJobExceptionMailTo : jobDetail.ExceptionEmail,
+                        $"Job：{jobDetail.JobGroupName}_{jobDetail.JobName}正在运行中，启动失败。请开发者确认Job状态是否正常，或者执行计划是否大于执行时间。");
+                });
+                throw new StringResponseException($"Job：{jobDetail.JobGroupName}_{jobDetail.JobName}正在运行中，启动失败");
+            }
+
+            //更新Job执行状态
+            jobDetail.ExecuteStatus = ExecuteStatusType.Executing;
+            _jobMangerDal.UpdateJobDetail(jobDetail);
+
+            //添加日志
             var jobExecuteLogs =
                 new JobExecuteLogs
                 {
@@ -71,6 +104,7 @@ namespace eHi.Job.Core.Infrastructure
                     JobDetailId = jobId
                 };
             var jobName = string.Empty;
+            var jobGroupName = string.Empty;
 
             var exceptionEmail = string.Empty;
             try
@@ -81,6 +115,7 @@ namespace eHi.Job.Core.Infrastructure
                     throw new Exception($"未找到此Job，JobId{jobId}");
                 }
                 jobName = jobDetail.JobName;
+                jobGroupName = jobDetail.JobGroupName;
 
                 jobExecuteLogs.JobName = jobName;
                 jobExecuteLogs.JobGroupName = jobDetail.JobGroupName;
@@ -88,6 +123,8 @@ namespace eHi.Job.Core.Infrastructure
                 jobExecuteLogs.Message = $"Job:{jobName},成功执行结束";
                 jobExecuteLogs.IsSuccess = true;
 
+                jobDetail.ExecuteStatus = ExecuteStatusType.WaitExecute;            
+                _jobMangerDal.UpdateJobDetail(jobDetail);
 
                 if (jobException != null)
                 {
@@ -97,7 +134,7 @@ namespace eHi.Job.Core.Infrastructure
             }
             catch (Exception ex)
             {
-                jobExecuteLogs.Message = $"Job:{jobName},执行出现异常:{ex.Message}";
+                jobExecuteLogs.Message = $"Job:{jobGroupName}_{jobName},执行出现异常:{ex.Message}";
                 jobExecuteLogs.IsSuccess = false;
                 jobExecuteLogs.ExceptionMessage = GetAllExceptionInfo(ex);
             }

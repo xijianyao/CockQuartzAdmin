@@ -16,7 +16,10 @@
                 Job分组
             </th>
             <th>
-                当前状态
+                Job状态
+            </th>
+            <th>
+                执行状态
             </th>
             <th>
                 Cron表达式
@@ -52,6 +55,9 @@
                     </td>
                     <td class="status">
                         @item.CurrentStatus
+                    </td>
+                    <td>
+                        @item.ExecuteStatus
                     </td>
                     <td>
                         @item.Cron
@@ -106,6 +112,13 @@
                                         <a href="" class="btnResume">恢复运行</a>
                                     </li>
                                 }
+                                @if (@item.ExecuteStatus == "执行中")
+                                {
+                                    <li>
+                                        <a href="" class="btnChangeJobToWaitExecute">重置成待执行</a>
+                                    </li>
+                                }
+                                
                                 <li>
                                     <a class="btnDelete" href="">删除Job</a>
                                 </li>

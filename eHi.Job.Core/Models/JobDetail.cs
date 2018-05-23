@@ -1,6 +1,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using eHi.Job.Core.Dto;
 
 namespace eHi.Job.Core.Models
 {
@@ -41,5 +42,7 @@ namespace eHi.Job.Core.Models
         public string ExceptionEmail { get; set; }
 
         public bool IsDeleted { get; set; }
+
+        public ExecuteStatusType ExecuteStatus { get; set; }
     }
 }

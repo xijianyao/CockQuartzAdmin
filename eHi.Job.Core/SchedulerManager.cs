@@ -46,7 +46,7 @@ namespace eHi.Job.Core
                     { "quartz.threadPool.threadCount", "20" },
                     { "quartz.threadPool.threadPriority", "Normal" },
                     { "quartz.jobStore.clustered", "true" },
-                    { "quartz.jobStore.clusterCheckinInterval", "1000" },
+                    { "quartz.jobStore.clusterCheckinInterval", "5000" },
                     { "quartz.jobStore.type", "Quartz.Impl.AdoJobStore.JobStoreTX, Quartz" },
                     { "quartz.serializer.type", "binary" },
                     { "quartz.jobStore.tablePrefix", "qrtz_" },

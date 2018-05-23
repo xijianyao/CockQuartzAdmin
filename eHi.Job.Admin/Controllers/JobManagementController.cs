@@ -94,6 +94,13 @@ namespace eHi.Job.Admin.Controllers
             return Json(new { success = true, message = "成功" });
         }
 
+        [HttpPost]
+        public JsonResult ChangeJobToWaitExecute(int id)
+        {
+            _jobService.ChangeJobToWaitExecute(id);
+            return Json(new { success = true, message = "成功" });
+        }
+
         //[HttpPost]
         //public JsonResult ModifyRequestUrl(int id, string requestUrl)
         //{

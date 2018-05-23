@@ -100,6 +100,25 @@ $(function () {
         });
     });
 
+    $(".btnChangeJobToWaitExecute").on("click", function (e) {
+        e.preventDefault();
+        var $this = $(this);
+        Alert.SubConfirm("确定要更改成待执行状态吗", "confirm", function () {
+            loadingFunction();
+            $.ajax({
+                url: url.btnChangeJobToWaitExecute,
+                type: 'POST',
+                data: { id: $this.parent().parent().parent().parent().attr("data-jobid") },
+                success: function (data) {
+                    alert(data.message);
+                    freshwindow();
+                    removeLoading();
+                },
+                error: function () { removeLoading(); }
+            });
+        });
+    });
+
     $(".btnEdit").on("click", function (e) {
         e.preventDefault();
         var $this = $(this);

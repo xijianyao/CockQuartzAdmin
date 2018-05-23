@@ -57,13 +57,17 @@ namespace eHi.Job.Core
 
                 var webUrl = application.Context.Request.Url.ToString();
 
-                if (!webUrl.ToLower().Contains("jobmanagement") && !webUrl.ToLower().Contains("home/index"))
+                if (!webUrl.ToLower().Contains("jobmanagement") 
+                    && !webUrl.ToLower().Contains("home/index")
+                    && !webUrl.ToLower().Contains(".css")
+                    && !webUrl.ToLower().Contains(".css")
+                    && !webUrl.ToLower().Contains(".js"))
                 {
                     application.CompleteRequest();
                     application.Context.Response.Charset = "utf-8";
                     application.Context.Response.ContentEncoding = Encoding.UTF8;
                     application.Context.Response.ContentType = "application/xml";
-                    application.Context.Response.Write("请求被终止。");
+                    application.Context.Response.Write("Job启动，业务webapi请求被终止。");
                 }
             }
 

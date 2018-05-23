@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using eHi.Common.Dto.Paged;
+using eHi.Common.Exception;
 using eHi.Job.Core.Dto;
 using eHi.Job.Core.Infrastructure;
 using eHi.Job.Core.Models;
+using EnumsNET;
 using Quartz;
 using Quartz.Impl.Matchers;
 
@@ -83,6 +85,7 @@ namespace eHi.Job.Core.JobManager
                         jobViewModel.Description = jobInfo.Description;
                         jobViewModel.ExceptionEmail = jobInfo.ExceptionEmail;
                         jobViewModel.Id = jobInfo.Id;
+                        jobViewModel.ExecuteStatus = jobInfo.ExecuteStatus.AsString(EnumFormat.Description);
                         jobViewModel.IsInSchedule = true;
                         result.Add(jobViewModel);
                     }
@@ -116,6 +119,7 @@ namespace eHi.Job.Core.JobManager
                     jobViewModel.IsInSchedule = false;
                     jobViewModel.Description = item.Description;
                     jobViewModel.ExceptionEmail = item.ExceptionEmail;
+                    jobViewModel.ExecuteStatus = item.ExecuteStatus.AsString(EnumFormat.Description);
                     result.Add(jobViewModel);
                 }
             }
@@ -240,8 +244,28 @@ withMisfireHandlingInstructionFireAndProceed
         public bool StartJob(int id)
         {
             var jobInfo = _jobMangerDal.GetJobDetailsById(id);
+            if (jobInfo.ExecuteStatus == ExecuteStatusType.Executing)
+            {
+                throw new StringResponseException("Job正在运行中，无法启动");
+            }
             JobKey jobKey = CreateJobKey(jobInfo.JobName, jobInfo.JobGroupName);
             _scheduler.TriggerJob(jobKey);
+            return true;
+        }
+
+        public bool ChangeJobToWaitExecute(int id)
+        {
+            var jobInfo = _jobMangerDal.GetJobDetailsById(id);
+            if (jobInfo.ExecuteStatus == ExecuteStatusType.Executing)
+            {
+                jobInfo.ExecuteStatus = ExecuteStatusType.WaitExecute;
+                _jobMangerDal.UpdateJobDetail(jobInfo);
+            }
+            else
+            {
+                return false;
+            }
+
             return true;
         }
 

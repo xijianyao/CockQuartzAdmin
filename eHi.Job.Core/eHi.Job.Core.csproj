@@ -246,6 +246,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Dto\ExecuteStatusType.cs" />
     <Compile Include="EhiJobHttpModule.cs" />
     <Compile Include="JobManager\JobMangerDal.cs" />
     <Compile Include="Infrastructure\ApiJobAttribute.cs" />

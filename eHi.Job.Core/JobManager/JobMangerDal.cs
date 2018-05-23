@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
 using DapperWrapper;
+using eHi.Job.Core.Dto;
 using eHi.Job.Core.Models;
 using EHiDBConfigNew.EhiConfig;
 
@@ -99,10 +100,10 @@ namespace eHi.Job.Core.JobManager
                 string sql = @"
 INSERT INTO [dbo].[JobDetail]
            ([JobGroupName],[JobName],[TriggerName],[TriggerGroupName],[Cron],[Description],[CreateTime]
-           ,[UpdateTime],[CreateUser],[UpdateUser],[ExceptionEmail],[IsDeleted])
+           ,[UpdateTime],[CreateUser],[UpdateUser],[ExceptionEmail],[IsDeleted],[ExecuteStatus])
      VALUES
            (@JobGroupName,@JobName,@TriggerName,@TriggerGroupName,@Cron,@Description
-           ,@CreateTime,@UpdateTime,@CreateUser,@UpdateUser,@ExceptionEmail,@IsDeleted) 
+           ,@CreateTime,@UpdateTime,@CreateUser,@UpdateUser,@ExceptionEmail,@IsDeleted,@ExecuteStatus) 
 select @@identity 
 ";
                 return dbExecuter.Query<int>(sql, jobDetail).First();
@@ -116,7 +117,7 @@ select @@identity
                 string sql = @"UPDATE [dbo].[JobDetail]
    SET [JobGroupName] = @JobGroupName,[JobName] = @JobName,[TriggerName] = @TriggerName,[TriggerGroupName] = @TriggerGroupName
       ,[Cron] = @Cron,[Description] = @Description,[CreateTime] = @CreateTime,[UpdateTime] = @UpdateTime,[CreateUser] = @CreateUser
-      ,[UpdateUser] = @UpdateUser,[ExceptionEmail] = @ExceptionEmail,[IsDeleted] = @IsDeleted
+      ,[UpdateUser] = @UpdateUser,[ExceptionEmail] = @ExceptionEmail,[IsDeleted] = @IsDeleted,[ExecuteStatus]=@ExecuteStatus 
  WHERE Id = @Id";
                 dbExecuter.Execute(sql, jobDetail);
             }
@@ -126,6 +127,13 @@ select @@identity
         {
             using (var dbExecuter = _dbExecutorFactory.CreateExecutor(_connectString))
             {
+                string jobExecuteStatus =
+                    @"select ExecuteStatus from [dbo].[JobDetail](nolock) where Id = @Id ";
+                if (dbExecuter.Query<ExecuteStatusType>(jobExecuteStatus, new { Id = id }).First() > 0)
+                {
+                    throw new Exception("改Job正在运行中，请确认Job状态后再执行删除操作");
+                }
+
                 string sql = "update jobdetail set isdeleted = 1 where id = @Id";
                 dbExecuter.Execute(sql, new { Id = id });
             }

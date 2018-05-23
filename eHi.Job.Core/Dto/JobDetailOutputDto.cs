@@ -37,5 +37,7 @@ namespace eHi.Job.Core.Dto
         public bool IsInSchedule { get; set; }
 
         public bool IsDeleted { get; set; }
+
+        public string ExecuteStatus { get; set; }
     }
 }
