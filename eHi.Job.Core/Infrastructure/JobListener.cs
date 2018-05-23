@@ -54,7 +54,7 @@ namespace eHi.Job.Core.Infrastructure
                         JobDetailId = jobId,
                         JobName = jobDetail.JobName,
                         JobGroupName = jobDetail.JobGroupName,
-                        Message = $"Job：{jobDetail.JobGroupName}_{jobDetail.JobName}正在运行中，启动失败",
+                        Message = $"Job：{jobDetail.JobGroupName}_{jobDetail.JobName}正在执行中，启动失败。请开发者确认Job执行状态是否正常，或者执行计划是否大于执行时间。",
                         ExecuteInstanceIp = GetIp(),
                         ExecuteInstanceName = context.Scheduler.SchedulerInstanceId,
                         CreationTime = DateTime.Now,
@@ -65,7 +65,7 @@ namespace eHi.Job.Core.Infrastructure
                 Task.Run(() =>
                 {
                     SendExceptionEmail(string.IsNullOrWhiteSpace(jobDetail.ExceptionEmail) ? ApiJobSettings.ApiJobExceptionMailTo : jobDetail.ExceptionEmail,
-                        $"Job：{jobDetail.JobGroupName}_{jobDetail.JobName}正在运行中，启动失败。请开发者确认Job状态是否正常，或者执行计划是否大于执行时间。");
+                        $"Job：{jobDetail.JobGroupName}_{jobDetail.JobName}正在执行中，启动失败。请开发者确认Job状态是否正常，或者执行计划是否大于执行时间。");
                 });
                 throw new StringResponseException($"Job：{jobDetail.JobGroupName}_{jobDetail.JobName}正在运行中，启动失败");
             }
@@ -81,7 +81,7 @@ namespace eHi.Job.Core.Infrastructure
                     JobDetailId = jobId,
                     JobName = jobDetail.JobName,
                     JobGroupName = jobDetail.JobGroupName,
-                    Message = $"Job:{jobDetail.JobName},正在执行中...",
+                    Message = $"Job:{jobDetail.JobGroupName}_{jobDetail.JobName},正在执行中...",
                     ExecuteInstanceIp = GetIp(),
                     ExecuteInstanceName = context.Scheduler.SchedulerInstanceId,
                     CreationTime = DateTime.Now,

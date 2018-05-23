@@ -50,15 +50,15 @@ namespace eHi.Job.Admin.Controllers
 
         //[Route("SendRequest1")]
         [ApiJob(
-            ApiJobName = "睡眠十秒",
+            ApiJobName = "睡眠二十秒",
             ApiJobDeveloper = "xijianyao",
             ApiJobDeveloperMail = "jianyao.xi@1hai.cn",
-            ApiJobDescription = "睡眠十秒"
+            ApiJobDescription = "访问百度后睡眠二十秒"
         )]
         public void SendRequest1()
         {
             new ServiceClient().Request("http://www.baidu.com", HttpVerb.Get, new { });
-            Thread.Sleep(10000);
+            Thread.Sleep(20000);
             Console.WriteLine("111");
         }
 
