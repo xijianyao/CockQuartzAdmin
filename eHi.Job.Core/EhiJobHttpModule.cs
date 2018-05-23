@@ -61,7 +61,8 @@ namespace eHi.Job.Core
                     && !webUrl.ToLower().Contains("home/index")
                     && !webUrl.ToLower().Contains(".css")
                     && !webUrl.ToLower().Contains(".css")
-                    && !webUrl.ToLower().Contains(".js"))
+                    && !webUrl.ToLower().Contains(".js")
+                    && !webUrl.ToLower().Contains("swagger"))
                 {
                     application.CompleteRequest();
                     application.Context.Response.Charset = "utf-8";
